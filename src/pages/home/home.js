@@ -15,7 +15,6 @@ export default function Home() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      console.log("cartItems", cartItems);
       try {
         const token = Cookies.get("token");
         const response = await fetch("http://localhost:3232/products", {
@@ -26,6 +25,7 @@ export default function Home() {
         });
 
         const data = await response.json();
+        console.log(data);
         setProducts(data);
       } catch (error) {
         console.error("Product fetch error:", error);
@@ -34,6 +34,8 @@ export default function Home() {
 
     fetchProducts();
   }, []);
+  const imageUrl =
+    "https://m.media-amazon.com/images/I/61NRYreJ2cL._AC_UF1000,1000_QL80_.jpg";
 
   const handleAddToCart = (product) => {
     console.log(product);
@@ -41,13 +43,20 @@ export default function Home() {
   };
   return (
     <>
-      <div className="mx-auto  flex justify-start pl-5 flex-wrap w-4/6">
+      <div className="mx-auto max-w-[1300px]">
         <div className="">
           <ul className="text-white flex flex-wrap">
             {products.map((product) => (
-              <li key={product.id}>
-                <div className="w-64 h-80 bg-white m-5">
-                  <img src={photo} alt="macbook" className="p-3"></img>
+              <li key={product.id} className="mr-auto">
+                <div className="w-64 h-92 bg-white m-5">
+                  <div className="w-64">
+                    <img
+                      crossOrigin="anonymous"
+                      src={imageUrl}
+                      alt="macbook"
+                      className="p-3 object"
+                    ></img>
+                  </div>
                   <div className="pl-2 pr-1 font-medium text-md text-gray-700 leading-5">
                     <p>{product.description}</p>
                     <p className="pl-3 font-bold text-xl mt-3 text-md text-green-700 leading-5">
