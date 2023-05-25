@@ -39,6 +39,7 @@ export default function Home() {
 
   const handleAddToCart = (product) => {
     console.log(product);
+
     dispatch(addToCartAsync(product));
   };
   return (
@@ -47,7 +48,7 @@ export default function Home() {
         <div className="">
           <ul className="text-white flex flex-wrap">
             {products.map((product) => (
-              <li key={product.id} className="mr-auto">
+              <li key={product.id} className="mr-auto shadow-md my-2 border">
                 <div className="w-64 h-92 bg-white m-5">
                   <div className="w-64">
                     <img

@@ -4,7 +4,6 @@ import { useRoutes } from "react-router-dom";
 import Notification from "./utils/Notification";
 
 function App() {
-  
   return (
     <div className="App">
       <Notification />
