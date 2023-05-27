@@ -10,7 +10,7 @@ export default function Login() {
   const [auth, setAuth] = useState({ email: null, password: null });
   const navigate = useNavigate();
   const handleLoginSuccess = (sessionToken) => {
-    Cookies.set("sellerToken", sessionToken, { expires: 7, path: "/" });
+    Cookies.set("token", sessionToken, { expires: 7, path: "/" });
     navigate("/");
   };
 

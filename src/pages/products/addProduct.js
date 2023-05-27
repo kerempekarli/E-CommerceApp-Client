@@ -43,7 +43,7 @@ export default function AddProduct() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const token = Cookies.get("sellerToken");
+    const token = Cookies.get("token");
     try {
       console.log(product);
       const formData = new FormData();
@@ -129,7 +129,7 @@ export default function AddProduct() {
           Category:
         </label>
         <select
-          id="category?_id"
+          id="category_id"
           name="category_id"
           value={product.category_id}
           onChange={handleInputChange}

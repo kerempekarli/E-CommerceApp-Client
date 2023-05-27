@@ -51,32 +51,33 @@ export default function Home() {
       <div className="mx-auto max-w-[1300px]">
         <div className="">
           <ul className="text-white flex flex-wrap">
-            { products.length > 0 && products?.map((product) => (
-              <li key={product.id} className="mr-auto shadow-md my-2 border">
-                <div className="w-64 h-92 bg-white m-5">
-                  <div className="w-64">
-                    <img
-                      crossOrigin="anonymous"
-                      src={imageUrl}
-                      alt="macbook"
-                      className="p-3 object"
-                    ></img>
+            {products.length > 0 &&
+              products?.map((product) => (
+                <li key={product.id} className="mr-auto shadow-md my-2 border">
+                  <div className="w-64 h-92 bg-white m-5">
+                    <div className="w-64">
+                      <img
+                        crossOrigin="anonymous"
+                        src={imageUrl}
+                        alt="macbook"
+                        className="p-3 object"
+                      ></img>
+                    </div>
+                    <div className="pl-2 pr-1 font-medium text-md text-gray-700 leading-5">
+                      <p>{product.description}</p>
+                      <p className="pl-3 font-bold text-xl mt-3 text-md text-green-700 leading-5">
+                        {product.price}
+                      </p>
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        className="bg-green-600 mt-5 px-5 py-2 text-xl font-medium text-white"
+                      >
+                        Add to cart
+                      </button>
+                    </div>
                   </div>
-                  <div className="pl-2 pr-1 font-medium text-md text-gray-700 leading-5">
-                    <p>{product.description}</p>
-                    <p className="pl-3 font-bold text-xl mt-3 text-md text-green-700 leading-5">
-                      {product.price}
-                    </p>
-                    <button
-                      onClick={() => handleAddToCart(product)}
-                      className="bg-green-600 mt-5 px-5 py-2 text-xl font-medium text-white"
-                    >
-                      Add to cart
-                    </button>
-                  </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              ))}
           </ul>
         </div>
       </div>

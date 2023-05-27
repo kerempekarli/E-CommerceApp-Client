@@ -55,20 +55,6 @@ export const removeFromCartAction = (product) => {
 
 export const clearCartAction = () => {
   return (dispatch) => {
-    // Sepeti backend'e temizlemek için gerekli isteği burada gönderebilirsiniz
-    // Temizleme işlemi başarılı olduğunda dispatch ile clearCart eylemini tetikleyebilirsiniz
-    // Örneğin:
-    // fetch('http://localhost:3232/cart/clear', {
-    //   method: 'DELETE',
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     if (data.success) {
-    //       dispatch(clearCart());
-    //     }
-    //   });
-
-    // Bu örnekte, direkt olarak clearCart eylemini tetikliyoruz
     dispatch(clearCart());
   };
 };
