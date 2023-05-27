@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import photo from "../../assets/61OJd5M+4nL._AC_UF1000,1000_QL80_.jpg";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import {
   addToCartAsync,
   removeFromCartAction,
@@ -9,6 +11,7 @@ import {
 } from "../../stores/cart/cartActions.js";
 
 export default function Home() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
   const [products, setProducts] = useState([]);
@@ -42,12 +45,13 @@ export default function Home() {
 
     dispatch(addToCartAsync(product));
   };
+
   return (
     <>
       <div className="mx-auto max-w-[1300px]">
         <div className="">
           <ul className="text-white flex flex-wrap">
-            {products.map((product) => (
+            { products.length > 0 && products?.map((product) => (
               <li key={product.id} className="mr-auto shadow-md my-2 border">
                 <div className="w-64 h-92 bg-white m-5">
                   <div className="w-64">
