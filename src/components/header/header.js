@@ -3,23 +3,25 @@ import { Link } from "react-router-dom";
 import Cart from "../cart/Cart";
 import { useState } from "react";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { clearCartAction } from "../../stores/cart/cartActions";
 import { useDispatch } from "react-redux";
 import { learnUserRole } from "../../utils/checkRole";
 export default function Header() {
   const navigate = useNavigate();
-  const [isOpen, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [isOpen, setOpen] = useState(false);
   const [role, setRole] = useState("");
   useEffect(() => {
     learnUserRole(setRole);
-  }, []);
+    console.log("ÇALIŞTIM");
+  }, [location, role]);
 
   const handleLogout = () => {
     // Çerezden tokeni temizle
     Cookies.remove("token");
-
+    setRole("");
     // Giriş sayfasına yönlendir
     navigate("/");
 

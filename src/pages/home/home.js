@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import photo from "../../assets/61OJd5M+4nL._AC_UF1000,1000_QL80_.jpg";
 import Cookies from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import {
   addToCartAsync,
@@ -64,16 +64,24 @@ export default function Home() {
                       ></img>
                     </div>
                     <div className="pl-2 pr-1 font-medium text-md text-gray-700 leading-5">
-                      <p>{product.description}</p>
+                      <Link to={`http://localhost:3000/products/${product.id}`}>
+                        <div className="flex space-x-2">
+                          {" "}
+                          <p className="font-bold">{product.name}</p>
+                          <p>{product.description}</p>
+                        </div>
+                      </Link>
                       <p className="pl-3 font-bold text-xl mt-3 text-md text-green-700 leading-5">
                         {product.price}
                       </p>
-                      <button
-                        onClick={() => handleAddToCart(product)}
-                        className="bg-green-600 mt-5 px-5 py-2 text-xl font-medium text-white"
-                      >
-                        Add to cart
-                      </button>
+                      {
+                        <button
+                          onClick={() => handleAddToCart(product)}
+                          className="bg-green-600 mt-5 px-5 py-2 text-xl font-medium text-white"
+                        >
+                          Add to cart
+                        </button>
+                      }
                     </div>
                   </div>
                 </li>
