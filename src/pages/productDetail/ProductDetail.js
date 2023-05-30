@@ -4,12 +4,18 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { addLike, removeLike } from "../../stores/likes/likeAction";
+import {
+  addLike,
+  removeLike,
+  fetchLikedProducts,
+} from "../../stores/likes/likeAction";
 import Cookies from "js-cookie";
 
 const ProductDetailPage = () => {
-  const { id } = useParams();
+  let { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [isLiked, setLike] = useState(false);
+
   const [token] = useState(() => {
     return Cookies.get("token");
   });
@@ -22,21 +28,28 @@ const ProductDetailPage = () => {
         const response = await axios.get(
           `http://localhost:3232/products/${id}`
         );
-        setProduct(response.data);
+        await setProduct(response.data);
+        await dispatch(fetchLikedProducts());
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchProduct();
-  }, [id, token]);
+  }, [id, dispatch]);
+  useEffect(() => {
+    id = parseInt(id);
+    const isLiked = likedProducts.includes(id);
+    console.log("İS LİKED ", likedProducts);
+    console.log("İS LİKED ");
+    setLike(isLiked);
+  }, [likedProducts, id]);
 
   const handleLike = () => {
+    id = parseInt(id);
     if (likedProducts.includes(id)) {
-      console.log("LİKED PRODUCTS", token);
       dispatch(removeLike(id, token));
     } else {
-      console.log("LİKED PRODUCTS", token);
       dispatch(addLike(id, token));
     }
   };
@@ -58,7 +71,8 @@ const ProductDetailPage = () => {
       <button onClick={handleLike}>
         <FontAwesomeIcon
           icon={faHeart}
-          color={likedProducts.includes(id) ? "red" : "inherit"}
+          className="fa-2x mt-2"
+          color={isLiked ? "red" : "inherit"}
         />
       </button>
     </div>

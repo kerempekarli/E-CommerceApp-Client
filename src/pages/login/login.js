@@ -14,7 +14,7 @@ export default function Login() {
   const dispatch = useDispatch();
   const handleLoginSuccess = (sessionToken, userId) => {
     Cookies.set("token", sessionToken, { expires: 7, path: "/" });
-    dispatch(fetchLikedProducts(userId));
+    dispatch(fetchLikedProducts());
     navigate("/");
   };
 
