@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { addLike, removeLike } from "../../stores/likes/likeAction";
+import Cookies from "js-cookie";
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [token] = useState(() => {
+    return Cookies.get("token");
+  });
+  const dispatch = useDispatch();
+  const likedProducts = useSelector((state) => state.likes);
 
   useEffect(() => {
-    console.log(id);
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
@@ -20,9 +29,17 @@ const ProductDetailPage = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, token]);
 
-  // Burada veriyi doğrudan kullanabilirsiniz veya bir API isteği yapabilirsiniz
+  const handleLike = () => {
+    if (likedProducts.includes(id)) {
+      console.log("LİKED PRODUCTS", token);
+      dispatch(removeLike(id, token));
+    } else {
+      console.log("LİKED PRODUCTS", token);
+      dispatch(addLike(id, token));
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 shadow-md rounded-lg">
@@ -38,6 +55,12 @@ const ProductDetailPage = () => {
       <p className="text-gray-400 text-xs mt-4">
         Created At: {product?.created_at}
       </p>
+      <button onClick={handleLike}>
+        <FontAwesomeIcon
+          icon={faHeart}
+          color={likedProducts.includes(id) ? "red" : "inherit"}
+        />
+      </button>
     </div>
   );
 };

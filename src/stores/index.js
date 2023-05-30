@@ -7,11 +7,13 @@ import thunk from "redux-thunk";
 import authReducer from "./auth/authSlice";
 import cartReducer from "./cart/cartSlice";
 import categoryReducer from "./categories/categoriesSlice";
+import likeReducer from "./likes/likeReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   cart: cartReducer,
   categories: categoryReducer,
+  likes: likeReducer,
 });
 
 const persistConfig = {

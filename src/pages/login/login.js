@@ -3,14 +3,18 @@ import Rem from "../../assets/Rem.jpg";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLikedProducts } from "../../stores/likes/likeAction";
 
 import Cookies from "js-cookie";
 
 export default function Login() {
   const [auth, setAuth] = useState({ email: null, password: null });
   const navigate = useNavigate();
-  const handleLoginSuccess = (sessionToken) => {
+  const dispatch = useDispatch();
+  const handleLoginSuccess = (sessionToken, userId) => {
     Cookies.set("token", sessionToken, { expires: 7, path: "/" });
+    dispatch(fetchLikedProducts(userId));
     navigate("/");
   };
 
@@ -35,11 +39,11 @@ export default function Login() {
       });
 
       const data = await response.json();
-      console.log("RESPONSE ", data.tokens?.access_token);
+      console.log("RESPONSE ", data);
 
       if (response.status === 200) {
         toast.success("Giriş başarılı!");
-        handleLoginSuccess(data.tokens.access_token.toString());
+        handleLoginSuccess(data.tokens.access_token.toString(), data.id);
       } else {
         toast.error("Giriş başarısız.");
         const token = Cookies.get("token");
