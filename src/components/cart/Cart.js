@@ -8,7 +8,6 @@ import Cookies from "js-cookie";
 import {
   addToCartAsync,
   removeFromCartAction,
-  clearCartAction,
 } from "../../stores/cart/cartActions.js";
 const Cart = () => {
   const cart = useSelector((state) => state.cart);

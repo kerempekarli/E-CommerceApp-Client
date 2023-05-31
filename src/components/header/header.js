@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Cart from "../cart/Cart";
+import Wishlist from "../wishlist/wishlist";
 import { useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -56,6 +57,7 @@ export default function Header() {
         </button>
       </div>
       {isOpen && <Cart></Cart>}
+      {<Wishlist></Wishlist>}
     </nav>
   );
 }
