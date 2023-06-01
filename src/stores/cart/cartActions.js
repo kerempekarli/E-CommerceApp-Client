@@ -4,6 +4,8 @@ import axios from "axios";
 export const addToCartAsync = (product) => {
   return async (dispatch) => {
     try {
+      const productfix = { ...product, product_id: product.id };
+      console.log("productfix ", productfix);
       console.log(product);
       const token = Cookies.get("token");
       const response = await fetch(
@@ -19,7 +21,7 @@ export const addToCartAsync = (product) => {
 
       const data = await response;
       if (data.status === 200) {
-        dispatch(addToCart(product));
+        dispatch(addToCart(productfix));
       }
     } catch (error) {
       // Hata yönetimi
@@ -32,10 +34,10 @@ export const addToCartAsync = (product) => {
 export const removeFromCartAction = (product) => {
   return async (dispatch) => {
     try {
-      console.log(product);
+      const productfix = { ...product, product_id: product.id };
       const token = Cookies.get("token");
       await fetch(
-        `http://localhost:3232/products/${product.id}/decrease-cart-item-quantity`,
+        `http://localhost:3232/products/${productfix.id}/decrease-cart-item-quantity`,
         {
           method: "POST",
           headers: {
@@ -46,10 +48,10 @@ export const removeFromCartAction = (product) => {
       );
 
       // Bu örnekte, direkt olarak removeFromCart eylemini tetikliyoruz
-      dispatch(removeFromCart(product));
+      dispatch(removeFromCart(productfix));
     } catch (error) {
       // Hata yönetimi
-      console.log("ERROR SEBEB ", product);
+      console.log("ERROR SEBEB ", error);
       console.error("Error:", error);
     }
   };

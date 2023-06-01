@@ -19,7 +19,7 @@ const cartSlice = createSlice({
       } else {
         // Ürün daha önce sepete eklenmemişse sepete yeni ürün olarak ekleyin
         state.push({
-          id: product.id,
+          product_id: product.id,
           name: product.name,
           quantity: 1,
           price: product.price,
@@ -28,7 +28,9 @@ const cartSlice = createSlice({
     },
     removeFromCart: (state, action) => {
       const product = action.payload;
-      const existingProductIndex = state.findIndex((p) => p.id === product.id);
+      const existingProductIndex = state.findIndex(
+        (p) => p.product_id === product.id
+      );
 
       if (existingProductIndex !== -1) {
         const existingProduct = state[existingProductIndex];

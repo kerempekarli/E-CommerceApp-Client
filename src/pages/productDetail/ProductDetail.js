@@ -66,6 +66,7 @@ const ProductDetailPage = () => {
       (item) => item.product_id === parsedId
     );
     console.log("CART PRODUCTS IZLEME ", isInCart);
+    console.log("CART PRODUCTS IZLEME ", cartProducts);
 
     setLike(isLiked);
     setInCart(isInCart);

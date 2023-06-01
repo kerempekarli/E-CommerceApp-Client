@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Cart from "../cart/Cart";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Wishlist from "../wishlist/wishlist";
 import { useState } from "react";
 import Cookies from "js-cookie";
@@ -8,6 +9,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { clearCartAction } from "../../stores/cart/cartActions";
 import { useDispatch } from "react-redux";
 import { learnUserRole } from "../../utils/checkRole";
+import {
+  faThumbsUp,
+  faShoppingCart,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -37,16 +43,21 @@ export default function Header() {
         <Link to={"/about"}>About</Link>
         <Link to={"/contact"}>Contact</Link>
       </div>
-      <div className="text-2xl font-medium">
+      <div className="text-2xl flex font-medium">
         {role === "user" && (
           <button
+            className="mr-2"
             onClick={() => {
               setOpen(!isOpen);
             }}
           >
-            Sepet
+            <FontAwesomeIcon
+              icon={faShoppingCart}
+              className={`text-2xl text-yellow-500`}
+            />
           </button>
         )}
+        {role === "user" && <Wishlist></Wishlist>}
         <button
           className="text-2xl bg-red-500 p-2 ml-10 text-white rounded-lg"
           onClick={() => {
@@ -57,7 +68,6 @@ export default function Header() {
         </button>
       </div>
       {isOpen && <Cart></Cart>}
-      {<Wishlist></Wishlist>}
     </nav>
   );
 }

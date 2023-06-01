@@ -10,6 +10,8 @@ import AuthenticatedLayout from "../layouts/authenticatedLayout";
 import AddProductPage from "../pages/products/addProduct";
 import AddCategory from "../pages/categories/AddCategory";
 import ProductDetail from "../pages/productDetail/ProductDetail";
+import ContactPage from "../pages/contact/contact";
+import AboutPage from "../pages/about/about.js";
 export const routes = [
   {
     path: "/",
@@ -26,6 +28,8 @@ export const routes = [
       { path: "seller-register", element: <SellerRegister /> },
       { path: "add-category", element: <AddCategory /> },
       { path: "products/:id", element: <ProductDetail /> },
+      { path: "/contact", element: <ContactPage /> },
+      { path: "/about", element: <AboutPage /> },
     ],
   },
 ];

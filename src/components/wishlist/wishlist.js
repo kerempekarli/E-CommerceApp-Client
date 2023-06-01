@@ -25,11 +25,10 @@ const Wishlist = () => {
   }, [dispatch]);
 
   return (
-    <div className="relative">
+    <button onClick={toggleWishlist} className="relative">
       <FontAwesomeIcon
         icon={faHeart}
-        onClick={toggleWishlist}
-        className="cursor-pointer"
+        className="cursor-pointer text-red-500 ml-2"
       />
       {isOpen && (
         <ul className="absolute top-10">
@@ -38,7 +37,7 @@ const Wishlist = () => {
           ))}
         </ul>
       )}
-    </div>
+    </button>
   );
 };
 
