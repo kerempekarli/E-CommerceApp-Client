@@ -2,25 +2,43 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import {
+  faThumbsUp,
+  faShoppingCart,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addLike,
   removeLike,
   fetchLikedProducts,
 } from "../../stores/likes/likeAction";
+import {
+  addToCartAsync,
+  removeFromCartAction,
+  setToCartAction,
+} from "../../stores/cart/cartActions.js";
+import {
+  addToWishlist,
+  fetchWishlist,
+  removeFromWishlist,
+} from "../../stores/wishlist/wishlistActions.js";
 import Cookies from "js-cookie";
 
 const ProductDetailPage = () => {
   let { id } = useParams();
   const [product, setProduct] = useState(null);
   const [isLiked, setLike] = useState(false);
+  const [isInCart, setInCart] = useState(false);
+  const [isInWishlist, setInWishlist] = useState(false);
 
   const [token] = useState(() => {
     return Cookies.get("token");
   });
   const dispatch = useDispatch();
   const likedProducts = useSelector((state) => state.likes);
+  const cartProducts = useSelector((state) => state.cart);
+  const wishlistProducts = useSelector((state) => state.wishlist);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -28,8 +46,10 @@ const ProductDetailPage = () => {
         const response = await axios.get(
           `http://localhost:3232/products/${id}`
         );
-        await setProduct(response.data);
-        await dispatch(fetchLikedProducts());
+        setProduct(response.data);
+        dispatch(fetchLikedProducts());
+        dispatch(setToCartAction());
+        dispatch(fetchWishlist());
       } catch (error) {
         console.error(error);
       }
@@ -37,20 +57,46 @@ const ProductDetailPage = () => {
 
     fetchProduct();
   }, [id, dispatch]);
+
   useEffect(() => {
-    id = parseInt(id);
-    const isLiked = likedProducts.includes(id);
-    console.log("İS LİKED ", likedProducts);
-    console.log("İS LİKED ");
+    const parsedId = parseInt(id);
+    const isLiked = likedProducts?.includes(parsedId);
+    const isInCart = cartProducts?.some((item) => item.product_id === parsedId);
+    const isInWishlist = wishlistProducts.some(
+      (item) => item.product_id === parsedId
+    );
+    console.log("CART PRODUCTS IZLEME ", isInCart);
+
     setLike(isLiked);
-  }, [likedProducts, id]);
+    setInCart(isInCart);
+    setInWishlist(isInWishlist);
+  }, [likedProducts, cartProducts, wishlistProducts, id]);
 
   const handleLike = () => {
-    id = parseInt(id);
-    if (likedProducts.includes(id)) {
-      dispatch(removeLike(id, token));
+    const parsedId = parseInt(id);
+    if (isLiked) {
+      dispatch(removeLike(parsedId, token));
     } else {
-      dispatch(addLike(id, token));
+      dispatch(addLike(parsedId, token));
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (isInCart) {
+      dispatch(removeFromCartAction(product));
+    } else {
+      dispatch(addToCartAsync(product));
+    }
+  };
+
+  const handleAddToWishlist = () => {
+    const parsedId = parseInt(id);
+    if (isInWishlist) {
+      console.log("SİLME İŞLEMİ İSTEK LİSTESİ");
+      dispatch(removeFromWishlist(parsedId));
+    } else {
+      console.log("EKLEME İŞLEMİ İSTEK LİSTESİ");
+      dispatch(addToWishlist(parsedId));
     }
   };
 
@@ -68,13 +114,32 @@ const ProductDetailPage = () => {
       <p className="text-gray-400 text-xs mt-4">
         Created At: {product?.created_at}
       </p>
-      <button onClick={handleLike}>
-        <FontAwesomeIcon
-          icon={faHeart}
-          className="fa-2x mt-2"
-          color={isLiked ? "red" : "inherit"}
-        />
-      </button>
+      <div className="flex justify-center mt-4">
+        <button onClick={handleLike} className="mr-4">
+          <FontAwesomeIcon
+            icon={faThumbsUp}
+            className={`text-2xl ${
+              isLiked ? "text-green-500" : "text-gray-500"
+            }`}
+          />
+        </button>
+        <button onClick={handleAddToCart} className="mr-4">
+          <FontAwesomeIcon
+            icon={faShoppingCart}
+            className={`text-2xl ${
+              isInCart ? "text-yellow-500" : "text-gray-500"
+            }`}
+          />
+        </button>
+        <button onClick={handleAddToWishlist}>
+          <FontAwesomeIcon
+            icon={faHeart}
+            className={`text-2xl ${
+              isInWishlist ? "text-red-500" : "text-gray-500"
+            }`}
+          />
+        </button>
+      </div>
     </div>
   );
 };

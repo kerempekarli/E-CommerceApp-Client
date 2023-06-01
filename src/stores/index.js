@@ -8,18 +8,20 @@ import authReducer from "./auth/authSlice";
 import cartReducer from "./cart/cartSlice";
 import categoryReducer from "./categories/categoriesSlice";
 import likeReducer from "./likes/likeReducer";
+import wishlistReducer from "./wishlist/wishlistSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   cart: cartReducer,
   categories: categoryReducer,
   likes: likeReducer,
+  wishlist: wishlistReducer,
 });
 
 const persistConfig = {
   key: "root",
   storage: storage,
-  whitelist: ["cart"], // persist edilecek reducer'ları belirtin
+  whitelist: ["cart", "wishlist", "likes"], // persist edilecek reducer'ları belirtin
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -1,9 +1,10 @@
-import { addToCart, removeFromCart, clearCart } from "./cartSlice";
+import { addToCart, removeFromCart, clearCart, setToCart } from "./cartSlice";
 import Cookies from "js-cookie";
-import { setToCart } from "../cart/cartSlice";
+import axios from "axios";
 export const addToCartAsync = (product) => {
   return async (dispatch) => {
     try {
+      console.log(product);
       const token = Cookies.get("token");
       const response = await fetch(
         `http://localhost:3232/products/${product.id}/add-to-cart`,
@@ -31,8 +32,9 @@ export const addToCartAsync = (product) => {
 export const removeFromCartAction = (product) => {
   return async (dispatch) => {
     try {
+      console.log(product);
       const token = Cookies.get("token");
-      const response = await fetch(
+      await fetch(
         `http://localhost:3232/products/${product.id}/decrease-cart-item-quantity`,
         {
           method: "POST",
@@ -58,6 +60,20 @@ export const clearCartAction = () => {
     dispatch(clearCart());
   };
 };
-export const setToCartAction = (items) => {
-  setToCart(items);
+export const setToCartAction = () => async (dispatch) => {
+  try {
+    const token = Cookies.get("token"); // Replace with your actual bearer token
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await axios.get("http://localhost:3232/cart", config);
+    const items = response.data;
+
+    dispatch(setToCart(items));
+  } catch (error) {
+    console.error(error);
+  }
 };
