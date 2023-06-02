@@ -34,6 +34,7 @@ const ProductDetailPage = () => {
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [editCommentIndex, setEditCommentIndex] = useState(-1);
+  const user = useSelector((state) => state.auth);
 
   const [token] = useState(() => {
     return Cookies.get("token");
@@ -76,6 +77,23 @@ const ProductDetailPage = () => {
     setInWishlist(isInWishlist);
   }, [likedProducts, cartProducts, wishlistProducts, id]);
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3232/products/${id}/get-comments`
+        );
+        const commentsData = response.data;
+        setComments(commentsData);
+        console.log(commentsData);
+      } catch (error) {
+        console.error("Error while fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [id]);
+
   const handleLike = () => {
     const parsedId = parseInt(id);
     if (isLiked) {
@@ -108,30 +126,84 @@ const ProductDetailPage = () => {
     setComment(event.target.value);
   };
 
-  const handleCommentSubmit = (event) => {
+  const handleCommentSubmit = async (event) => {
     event.preventDefault();
     if (editCommentIndex === -1) {
-      // Yeni yorum ekleme
-      setComments([...comments, comment]);
+      try {
+        const token = await Cookies.get("token");
+        const productId = id * 1;
+        await axios.post(
+          `http://localhost:3232/products/${productId}/add-comment`,
+          {
+            comment: comment,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        fetchComments();
+      } catch (error) {
+        console.error("Error while adding comment:", error);
+      }
     } else {
       // Yorumu düzenleme
-      const updatedComments = [...comments];
-      updatedComments[editCommentIndex] = comment;
-      setComments(updatedComments);
-      setEditCommentIndex(-1);
+      try {
+        const commentId = comments[editCommentIndex].id;
+        await axios.put(
+          `http://localhost:3232/products/${id}/comments/${commentId}`,
+          {
+            comment: comment,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        fetchComments();
+        setEditCommentIndex(-1);
+      } catch (error) {
+        console.error("Error while updating comment:", error);
+      }
     }
     setComment("");
   };
 
   const handleCommentEdit = (index) => {
-    setComment(comments[index]);
+    setComment(comments[index].comment);
     setEditCommentIndex(index);
   };
 
-  const handleCommentDelete = (index) => {
-    const updatedComments = [...comments];
-    updatedComments.splice(index, 1);
-    setComments(updatedComments);
+  const handleCommentDelete = async (index) => {
+    try {
+      const commentId = comments[index].id;
+      const token = await Cookies.get("token");
+      await axios.delete(
+        `http://localhost:3232/products/${id}/comments/${commentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchComments();
+    } catch (error) {
+      console.error("Error while deleting comment:", error);
+    }
+  };
+  const fetchComments = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3232/products/${id}/get-comments`
+      );
+      const commentsData = response.data;
+      setComments(commentsData);
+      console.log(commentsData);
+    } catch (error) {
+      console.error("Error while fetching comments:", error);
+    }
   };
 
   return (
@@ -174,21 +246,54 @@ const ProductDetailPage = () => {
           />
         </button>
       </div>
-      <ul>
-        {comments?.map((comment, index) => (
-          <li key={index}>
-            {comment}
-            <button onClick={() => handleCommentEdit(index)}>Edit</button>
-            <button onClick={() => handleCommentDelete(index)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-      <form onSubmit={handleCommentSubmit}>
-        <textarea value={comment} onChange={handleCommentChange} />
-        <button type="submit">
-          {editCommentIndex === -1 ? "Add Comment" : "Update Comment"}
-        </button>
-      </form>
+      {/* COMMENTS */}
+      <div className="">
+        {" "}
+        <ul>
+          {comments?.map((comment, index) => (
+            <li
+              className={`bg-gray-300 flex space-x-3 justify-between ${
+                comment.user_id = id ? "bg-green-500" : "bg-gray-300"
+              }`}
+              key={index}
+            >
+              {comment.comment}
+              <div>
+                <button
+                  className="bg-yellow-500 p-2 rounded-lg"
+                  onClick={() => handleCommentEdit(index)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="bg-red-500 p-2 rounded-lg"
+                  onClick={() => handleCommentDelete(index)}
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <form
+          className="flex justify-center mt-5"
+          onSubmit={handleCommentSubmit}
+        >
+          <div>
+            <textarea
+              className="outline-0 bg-gray-100 block"
+              value={comment}
+              onChange={handleCommentChange}
+            />
+          </div>
+          <button
+            className="bg-green-500 flex-grow-0 p-2 rounded-lg "
+            type="submit"
+          >
+            {editCommentIndex === -1 ? "Add Comment" : "Update Comment"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

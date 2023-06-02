@@ -37,6 +37,7 @@ const Cart = () => {
   const handleAddToCart = (product) => {
     const newProduct = {
       id: product.id,
+      product_id: product.id,
       name: product.name,
       quantity: product.quantity,
       price: product.price,
@@ -46,6 +47,7 @@ const Cart = () => {
   const handleDeleteToCart = (product) => {
     const newProduct = {
       id: product.id,
+      product_id: product.id,
       name: product.name,
       quantity: product.quantity,
       price: product.price,

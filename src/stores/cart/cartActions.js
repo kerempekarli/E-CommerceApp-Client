@@ -35,11 +35,12 @@ export const removeFromCartAction = (product) => {
   return async (dispatch) => {
     try {
       const productfix = { ...product, product_id: product.id };
+      console.log("PRODUCTFIX", productfix);
       const token = Cookies.get("token");
       await fetch(
-        `http://localhost:3232/products/${productfix.id}/decrease-cart-item-quantity`,
+        `http://localhost:3232/products/${product.id}/decrease-cart-item-quantity`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
