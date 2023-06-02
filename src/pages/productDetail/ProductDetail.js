@@ -31,6 +31,9 @@ const ProductDetailPage = () => {
   const [isLiked, setLike] = useState(false);
   const [isInCart, setInCart] = useState(false);
   const [isInWishlist, setInWishlist] = useState(false);
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [editCommentIndex, setEditCommentIndex] = useState(-1);
 
   const [token] = useState(() => {
     return Cookies.get("token");
@@ -101,6 +104,36 @@ const ProductDetailPage = () => {
     }
   };
 
+  const handleCommentChange = (event) => {
+    setComment(event.target.value);
+  };
+
+  const handleCommentSubmit = (event) => {
+    event.preventDefault();
+    if (editCommentIndex === -1) {
+      // Yeni yorum ekleme
+      setComments([...comments, comment]);
+    } else {
+      // Yorumu düzenleme
+      const updatedComments = [...comments];
+      updatedComments[editCommentIndex] = comment;
+      setComments(updatedComments);
+      setEditCommentIndex(-1);
+    }
+    setComment("");
+  };
+
+  const handleCommentEdit = (index) => {
+    setComment(comments[index]);
+    setEditCommentIndex(index);
+  };
+
+  const handleCommentDelete = (index) => {
+    const updatedComments = [...comments];
+    updatedComments.splice(index, 1);
+    setComments(updatedComments);
+  };
+
   return (
     <div className="max-w-md mx-auto bg-white p-8 shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-4">{product?.name}</h2>
@@ -141,6 +174,21 @@ const ProductDetailPage = () => {
           />
         </button>
       </div>
+      <ul>
+        {comments?.map((comment, index) => (
+          <li key={index}>
+            {comment}
+            <button onClick={() => handleCommentEdit(index)}>Edit</button>
+            <button onClick={() => handleCommentDelete(index)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+      <form onSubmit={handleCommentSubmit}>
+        <textarea value={comment} onChange={handleCommentChange} />
+        <button type="submit">
+          {editCommentIndex === -1 ? "Add Comment" : "Update Comment"}
+        </button>
+      </form>
     </div>
   );
 };
