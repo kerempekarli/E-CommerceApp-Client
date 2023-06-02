@@ -4,11 +4,11 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
 
-import authReducer from "./auth/authSlice";
 import cartReducer from "./cart/cartSlice";
 import categoryReducer from "./categories/categoriesSlice";
 import likeReducer from "./likes/likeReducer";
 import wishlistReducer from "./wishlist/wishlistSlice";
+import authReducer from "./auth/authSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -21,7 +21,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage: storage,
-  whitelist: ["cart", "wishlist", "likes"], // persist edilecek reducer'ları belirtin
+  whitelist: ["cart", "wishlist", "likes", "auth"], // persist edilecek reducer'ları belirtin
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

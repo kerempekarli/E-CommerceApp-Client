@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { clearCartAction } from "../../stores/cart/cartActions";
 import { useDispatch } from "react-redux";
 import { learnUserRole } from "../../utils/checkRole";
+import { logoutAction } from "../../stores/auth/authAction";
 import {
   faThumbsUp,
   faShoppingCart,
@@ -28,6 +29,7 @@ export default function Header() {
   const handleLogout = () => {
     // Çerezden tokeni temizle
     Cookies.remove("token");
+    dispatch(logoutAction());
     setRole("");
     // Giriş sayfasına yönlendir
     navigate("/");

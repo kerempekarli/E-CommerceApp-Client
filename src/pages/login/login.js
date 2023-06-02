@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Rem from "../../assets/Rem.jpg";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchLikedProducts } from "../../stores/likes/likeAction";
-
+import { loginAction } from "../../stores/auth/authAction";
 import Cookies from "js-cookie";
 
 export default function Login() {
@@ -15,12 +15,9 @@ export default function Login() {
   const handleLoginSuccess = (sessionToken, userId) => {
     Cookies.set("token", sessionToken, { expires: 7, path: "/" });
     dispatch(fetchLikedProducts());
+
     navigate("/");
   };
-
-  // const handleLogout = () => {
-  //   Cookies.remove("token", { path: "/" });
-  // };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,6 +37,7 @@ export default function Login() {
 
       const data = await response.json();
       console.log("RESPONSE ", data);
+      dispatch(loginAction(data));
 
       if (response.status === 200) {
         toast.success("Giriş başarılı!");

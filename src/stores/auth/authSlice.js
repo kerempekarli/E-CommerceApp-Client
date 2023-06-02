@@ -1,20 +1,27 @@
-// authReducer.js
-import { createSlice } from "@reduxjs/toolkit";
-
+// reducers.js dosyası
 
 const initialState = {
-  token: null,
+  user: null,
+  isAuthenticated: false,
 };
 
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    setToken: (state, action) => {
-      state.token = action.payload;
-    },
-  },
-});
+const authReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "LOGIN":
+      return {
+        ...state,
+        user: action.payload,
+        isAuthenticated: true,
+      };
+    case "LOGOUT":
+      return {
+        ...state,
+        user: null,
+        isAuthenticated: false,
+      };
+    default:
+      return state;
+  }
+};
 
-export const { setToken } = authSlice.actions;
-export default authSlice.reducer;
+export default authReducer;
