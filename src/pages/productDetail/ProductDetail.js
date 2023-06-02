@@ -253,7 +253,7 @@ const ProductDetailPage = () => {
           {comments?.map((comment, index) => (
             <li
               className={`bg-gray-300 flex space-x-3 justify-between ${
-                comment.user_id = id ? "bg-green-500" : "bg-gray-300"
+                comment.user_id = id ? "bg-green-100" : "bg-gray-300"
               }`}
               key={index}
             >
