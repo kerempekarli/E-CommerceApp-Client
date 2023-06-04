@@ -12,6 +12,7 @@ import AddCategory from "../pages/categories/AddCategory";
 import ProductDetail from "../pages/productDetail/ProductDetail";
 import ContactPage from "../pages/contact/contact";
 import AboutPage from "../pages/about/about.js";
+import SalesChart from "../pages/d3/d3";
 export const routes = [
   {
     path: "/",
@@ -30,6 +31,7 @@ export const routes = [
       { path: "products/:id", element: <ProductDetail /> },
       { path: "/contact", element: <ContactPage /> },
       { path: "/about", element: <AboutPage /> },
+      { path: "/sales-chart", element: <SalesChart /> },
     ],
   },
 ];

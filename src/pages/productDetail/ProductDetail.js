@@ -24,6 +24,7 @@ import {
   removeFromWishlist,
 } from "../../stores/wishlist/wishlistActions.js";
 import Cookies from "js-cookie";
+import CheckoutForm from "../../components/stripeContainer";
 
 const ProductDetailPage = () => {
   let { id } = useParams();
@@ -252,9 +253,8 @@ const ProductDetailPage = () => {
         <ul>
           {comments?.map((comment, index) => (
             <li
-              className={`bg-gray-300 flex space-x-3 justify-between ${
-                comment.user_id = id ? "bg-green-100" : "bg-gray-300"
-              }`}
+              className={`bg-gray-300 flex space-x-3 justify-between ${(comment.user_id =
+                id ? "bg-green-100" : "bg-gray-300")}`}
               key={index}
             >
               {comment.comment}
@@ -294,6 +294,7 @@ const ProductDetailPage = () => {
           </button>
         </form>
       </div>
+      <CheckoutForm></CheckoutForm>
     </div>
   );
 };
