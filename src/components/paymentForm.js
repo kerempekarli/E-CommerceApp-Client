@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default function PaymentForm() {
   const [success, setSuccess] = useState(false);
@@ -16,11 +17,21 @@ export default function PaymentForm() {
 
     if (!error) {
       try {
+        const token = Cookies.get("token");
         const { id } = paymentMethod;
-        const response = await axios.post("https://localhost:4000/payment", {
-          amount: 1000,
-          id,
-        });
+        const response = await axios.post(
+          "http://localhost:3232/orders/",
+          {
+            amount: 1000,
+            id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (response.data.success) {
           console.log("Successful payment");
           setSuccess(true);
@@ -34,12 +45,13 @@ export default function PaymentForm() {
   return (
     <>
       {!success ? (
-        <form onSubmit={handleSubmit}>
+        <form className="py-5 px-2" onSubmit={handleSubmit}>
           <fieldset className="FormGroup">
             <div>
-              <CardElement></CardElement>
+              <CardElement className=""></CardElement>
             </div>
           </fieldset>
+          <button type="submit">Pay</button>
         </form>
       ) : (
         <div>
