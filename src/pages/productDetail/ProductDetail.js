@@ -25,6 +25,7 @@ import {
 } from "../../stores/wishlist/wishlistActions.js";
 import Cookies from "js-cookie";
 import CheckoutForm from "../../components/stripeContainer";
+import io from "socket.io-client";
 
 const ProductDetailPage = () => {
   let { id } = useParams();
@@ -94,6 +95,44 @@ const ProductDetailPage = () => {
 
     fetchComments();
   }, [id]);
+  useEffect(() => {
+    console.log("useEffect çalıştı");
+    const socket = io("http://localhost:3002");
+
+    socket.on("ordersuccess", () => {
+      // Sipariş başarılı olduğunda yapılacak işlemler burada gerçekleştirilir
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+      console.log("Sipariş başarılı!");
+
+      // İşlemler tamamlandıktan sonra sunucu tarafına geri bildirim yapabilirsiniz
+      socket.emit("ordercompleted");
+    });
+
+    socket.on("disconnect", () => {
+      // Sunucuyla bağlantı kesildiğinde yapılacak işlemler burada gerçekleştirilir
+      console.log("Sunucuyla bağlantı koptu!");
+    });
+
+    return () => {
+      // Bileşen kaldırıldığında socket bağlantısını kapatın
+      socket.disconnect();
+    };
+  });
 
   const handleLike = () => {
     const parsedId = parseInt(id);
