@@ -105,14 +105,19 @@ const ProductDetailPage = () => {
   }, [id]);
   useEffect(() => {
     // Socket.io sunucusuna bağlan
-    const socket = io("http://localhost:3000");
+    const socket = io("http://localhost:3002");
 
     // Özel odaya katıl
-    const roomId = user.id; // İlgili client'ın oda adını burada belirleyin
+    const roomId = user.user.id; // İlgili client'ın oda adını burada belirleyin
+    console.log("user_id ", roomId);
+    console.log("user_id ", user.id);
+    console.log("user_id ", user.id);
+    console.log("user_id ", user.id);
+    console.log("user_id ", user);
     socket.emit("joinRoom", roomId);
 
     // Sipariş durumu güncellemesini dinle
-    socket.on("updateOrderStatus", ({ orderId, status }) => {
+    socket.on("updateOrderStatus", ({ status }) => {
       // Sipariş durumu güncellendiğinde yapılacak işlemler
       setOrderStatus(status);
       console.log("ksadgkskgsakgdskagkdasgksad");

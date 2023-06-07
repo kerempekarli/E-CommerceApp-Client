@@ -11,7 +11,9 @@ const cartSlice = createSlice({
     addToCart: (state, action) => {
       const product = action.payload;
 
-      const existingProduct = state.find((p) => p.product_id === product.product_id);
+      const existingProduct = state.find(
+        (p) => p.product_id === product.product_id
+      );
 
       if (existingProduct) {
         // Ürün zaten sepete ekli ise sadece sayısını artırın
