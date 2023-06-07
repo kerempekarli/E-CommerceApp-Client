@@ -35,9 +35,10 @@ const Cart = () => {
   });
 
   const handleAddToCart = (product) => {
+    console.log("BUG SEEBEP BULMA ", product);
     const newProduct = {
-      id: product.id,
-      product_id: product.id,
+      id: product.product_id,
+      product_id: product.product_id,
       name: product.name,
       quantity: product.quantity,
       price: product.price,
@@ -46,8 +47,8 @@ const Cart = () => {
   };
   const handleDeleteToCart = (product) => {
     const newProduct = {
-      id: product.id,
-      product_id: product.id,
+      id: product.product_id,
+      product_id: product.product_id,
       name: product.name,
       quantity: product.quantity,
       price: product.price,

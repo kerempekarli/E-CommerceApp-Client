@@ -8,12 +8,13 @@ export const addToCartAsync = (product) => {
       console.log("productfix ", productfix);
       console.log(product);
       const token = Cookies.get("token");
-      const response = await fetch(
+      const response = await axios.post(
         `http://localhost:3232/products/${product.id}/add-to-cart`,
         {
-          method: "POST",
+          seller_id: product.seller_id,
+        },
+        {
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -34,6 +35,7 @@ export const addToCartAsync = (product) => {
 export const removeFromCartAction = (product) => {
   return async (dispatch) => {
     try {
+      console.log("Karttan silme işlemi çalıştı");
       const productfix = { ...product, product_id: product.id };
       console.log("PRODUCTFIX", productfix);
       const token = Cookies.get("token");

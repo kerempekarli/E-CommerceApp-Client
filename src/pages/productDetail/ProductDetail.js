@@ -8,6 +8,8 @@ import {
   faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   addLike,
   removeLike,
@@ -26,17 +28,19 @@ import {
 import Cookies from "js-cookie";
 import CheckoutForm from "../../components/stripeContainer";
 import io from "socket.io-client";
+import SellerList from "../../components/sellerList/sellerList";
 
 const ProductDetailPage = () => {
   let { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [products, setProducts] = useState(null);
   const [isLiked, setLike] = useState(false);
   const [isInCart, setInCart] = useState(false);
   const [isInWishlist, setInWishlist] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
   const [editCommentIndex, setEditCommentIndex] = useState(-1);
-  const user = useSelector((state) => state.auth);
+  const [orderStatus, setOrderStatus] = useState("");
 
   const [token] = useState(() => {
     return Cookies.get("token");
@@ -44,6 +48,7 @@ const ProductDetailPage = () => {
   const dispatch = useDispatch();
   const likedProducts = useSelector((state) => state.likes);
   const cartProducts = useSelector((state) => state.cart);
+  const user = useSelector((state) => state.auth);
   const wishlistProducts = useSelector((state) => state.wishlist);
 
   useEffect(() => {
@@ -52,7 +57,10 @@ const ProductDetailPage = () => {
         const response = await axios.get(
           `http://localhost:3232/products/${id}`
         );
-        setProduct(response.data);
+        setProducts(response.data.products);
+        setProduct(response.data.products[0]);
+
+        console.log("PRODUCT,", response.data);
         dispatch(fetchLikedProducts());
         dispatch(setToCartAction());
         dispatch(fetchWishlist());
@@ -71,8 +79,8 @@ const ProductDetailPage = () => {
     const isInWishlist = wishlistProducts.some(
       (item) => item.product_id === parsedId
     );
-    console.log("CART PRODUCTS IZLEME ", isInCart);
-    console.log("CART PRODUCTS IZLEME ", cartProducts);
+    console.log("IS IN CART", isInCart);
+    console.log("CART PRODUCTS", cartProducts);
 
     setLike(isLiked);
     setInCart(isInCart);
@@ -96,43 +104,28 @@ const ProductDetailPage = () => {
     fetchComments();
   }, [id]);
   useEffect(() => {
-    console.log("useEffect çalıştı");
-    const socket = io("http://localhost:3002");
+    // Socket.io sunucusuna bağlan
+    const socket = io("http://localhost:3000");
 
-    socket.on("ordersuccess", () => {
-      // Sipariş başarılı olduğunda yapılacak işlemler burada gerçekleştirilir
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
-      console.log("Sipariş başarılı!");
+    // Özel odaya katıl
+    const roomId = user.id; // İlgili client'ın oda adını burada belirleyin
+    socket.emit("joinRoom", roomId);
 
-      // İşlemler tamamlandıktan sonra sunucu tarafına geri bildirim yapabilirsiniz
-      socket.emit("ordercompleted");
+    // Sipariş durumu güncellemesini dinle
+    socket.on("updateOrderStatus", ({ orderId, status }) => {
+      // Sipariş durumu güncellendiğinde yapılacak işlemler
+      setOrderStatus(status);
+      console.log("ksadgkskgsakgdskagkdasgksad");
+
+      // Bildirim gönder
+      toast.success(`Sipariş durumu güncellendi: ${status}`);
     });
 
-    socket.on("disconnect", () => {
-      // Sunucuyla bağlantı kesildiğinde yapılacak işlemler burada gerçekleştirilir
-      console.log("Sunucuyla bağlantı koptu!");
-    });
-
+    // Component temizlendiğinde Socket.io bağlantısını kapat
     return () => {
-      // Bileşen kaldırıldığında socket bağlantısını kapatın
       socket.disconnect();
     };
-  });
+  }, [user]);
 
   const handleLike = () => {
     const parsedId = parseInt(id);
@@ -245,6 +238,23 @@ const ProductDetailPage = () => {
       console.error("Error while fetching comments:", error);
     }
   };
+  const handleSelectSeller = async (products, seller_id) => {
+    if (!products || products.length === 0) {
+      // products dizisi boş veya gelmediği durumu ele al
+      console.error("No products available.");
+      return;
+    }
+
+    for (let i = 0; i < products.length; i++) {
+      if (products[i].seller_id === seller_id) {
+        setProduct(products[i]);
+        return; // Eşleşen objeyi bulduktan sonra fonksiyondan çık
+      }
+    }
+
+    // Eşleşen obje bulunamadıysa
+    console.error("No matching product found.");
+  };
 
   return (
     <div className="max-w-md mx-auto bg-white p-8 shadow-md rounded-lg">
@@ -334,6 +344,12 @@ const ProductDetailPage = () => {
         </form>
       </div>
       <CheckoutForm></CheckoutForm>
+      {/* SELLER LİST */}
+      <SellerList
+        productDTO={products}
+        onSelectSeller={handleSelectSeller}
+        product={product}
+      ></SellerList>
     </div>
   );
 };

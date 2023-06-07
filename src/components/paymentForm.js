@@ -22,7 +22,6 @@ export default function PaymentForm() {
         const response = await axios.post(
           "http://localhost:3232/orders/",
           {
-            amount: 1000,
             id,
           },
           {
