@@ -104,19 +104,18 @@ const ProductDetailPage = () => {
     fetchComments();
   }, [id]);
   useEffect(() => {
+    console.log("USER_ID_KONTROLÜ ", user.user.id);
     // Socket.io sunucusuna bağlan
     const socket = io("http://localhost:3002");
 
-    // Özel odaya katıl
-    const roomId = user.user.id; // İlgili client'ın oda adını burada belirleyin
-    console.log("user_id ", roomId);
-    console.log("user_id ", user.id);
-    console.log("user_id ", user.id);
-    console.log("user_id ", user.id);
-    console.log("user_id ", user);
-    socket.emit("joinRoom", roomId);
+    socket.on("connect", () => {
+      console.log("Socket.io bağlantısı kuruldu");
+      const roomId = user.user.id; // User_id'yi string olarak alın
 
-    // Sipariş durumu güncellemesini dinle
+      // Odaya katıl
+      socket.emit("joinRoom", roomId);
+    });
+
     socket.on("updateOrderStatus", ({ status }) => {
       // Sipariş durumu güncellendiğinde yapılacak işlemler
       setOrderStatus(status);
@@ -140,7 +139,6 @@ const ProductDetailPage = () => {
       dispatch(addLike(parsedId, token));
     }
   };
-
   const handleAddToCart = () => {
     if (isInCart) {
       dispatch(removeFromCartAction(product));
@@ -148,7 +146,6 @@ const ProductDetailPage = () => {
       dispatch(addToCartAsync(product));
     }
   };
-
   const handleAddToWishlist = () => {
     const parsedId = parseInt(id);
     if (isInWishlist) {
@@ -159,11 +156,9 @@ const ProductDetailPage = () => {
       dispatch(addToWishlist(parsedId));
     }
   };
-
   const handleCommentChange = (event) => {
     setComment(event.target.value);
   };
-
   const handleCommentSubmit = async (event) => {
     event.preventDefault();
     if (editCommentIndex === -1) {
@@ -208,12 +203,10 @@ const ProductDetailPage = () => {
     }
     setComment("");
   };
-
   const handleCommentEdit = (index) => {
     setComment(comments[index].comment);
     setEditCommentIndex(index);
   };
-
   const handleCommentDelete = async (index) => {
     try {
       const commentId = comments[index].id;
