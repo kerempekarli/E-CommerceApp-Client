@@ -22,7 +22,7 @@ export default function PaymentForm() {
         const response = await axios.post(
           "http://localhost:3232/orders/",
           {
-            id,
+            payment_id: id,
           },
           {
             headers: {
