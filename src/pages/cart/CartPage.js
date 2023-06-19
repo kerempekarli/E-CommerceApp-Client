@@ -123,7 +123,6 @@ const CartDetail = ({ setOpen }) => {
       );
     } else {
       // Proceed with the order
-      toast.success("Order placed successfully!");
       dispatch(openModal());
     }
   };
