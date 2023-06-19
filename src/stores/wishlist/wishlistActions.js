@@ -61,7 +61,7 @@ export const fetchWishlist = () => async (dispatch) => {
       "http://localhost:3232/wishlist/getall",
       config
     );
-    const wishlist = response.data;
+    const wishlist = await response.data;
     dispatch(SET_WISHLIST(wishlist));
   } catch (error) {
     console.error(error);

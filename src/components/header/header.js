@@ -7,9 +7,10 @@ import { useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate, useLocation } from "react-router-dom";
 import { clearCartAction } from "../../stores/cart/cartActions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { learnUserRole } from "../../utils/checkRole";
 import { logoutAction } from "../../stores/auth/authAction";
+
 import {
   faThumbsUp,
   faShoppingCart,
@@ -19,8 +20,10 @@ export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
+  const auth = useSelector((state) => state.auth);
   const [isOpen, setOpen] = useState(false);
   const [role, setRole] = useState("");
+
   useEffect(() => {
     learnUserRole(setRole);
     console.log("ÇALIŞTIM");
@@ -59,17 +62,19 @@ export default function Header() {
             />
           </button>
         )}
-        {role === "user" && <Wishlist></Wishlist>}
-        <button
-          className="text-2xl bg-red-500 p-2 ml-10 text-white rounded-lg"
-          onClick={() => {
-            handleLogout();
-          }}
-        >
-          Logout
-        </button>
+        {auth.user !== null && <Wishlist></Wishlist>}
+        {auth.user !== null && (
+          <button
+            className="text-2xl bg-red-500 p-2 ml-10 text-white rounded-lg"
+            onClick={() => {
+              handleLogout();
+            }}
+          >
+            Logout
+          </button>
+        )}
       </div>
-      {isOpen && <Cart></Cart>}
+      {isOpen && <Cart setOpen={setOpen} ></Cart>}
     </nav>
   );
 }

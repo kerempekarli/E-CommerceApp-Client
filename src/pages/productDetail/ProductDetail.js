@@ -26,7 +26,7 @@ import {
   removeFromWishlist,
 } from "../../stores/wishlist/wishlistActions.js";
 import Cookies from "js-cookie";
-import CheckoutForm from "../../components/stripeContainer";
+
 import io from "socket.io-client";
 import SellerList from "../../components/sellerList/sellerList";
 
@@ -76,7 +76,7 @@ const ProductDetailPage = () => {
     const parsedId = parseInt(id);
     const isLiked = likedProducts?.includes(parsedId);
     const isInCart = cartProducts?.some((item) => item.product_id === parsedId);
-    const isInWishlist = wishlistProducts.some(
+    const isInWishlist = wishlistProducts?.some(
       (item) => item.product_id === parsedId
     );
     console.log("IS IN CART", isInCart);
@@ -341,7 +341,7 @@ const ProductDetailPage = () => {
           </button>
         </form>
       </div>
-      <CheckoutForm></CheckoutForm>
+
       {/* SELLER LİST */}
       <SellerList
         productDTO={products}

@@ -9,13 +9,14 @@ import categoryReducer from "./categories/categoriesSlice";
 import likeReducer from "./likes/likeReducer";
 import wishlistReducer from "./wishlist/wishlistSlice";
 import authReducer from "./auth/authSlice";
-
+import modalReducer from "./modal/modalSlice";
 const rootReducer = combineReducers({
   auth: authReducer,
   cart: cartReducer,
   categories: categoryReducer,
   likes: likeReducer,
   wishlist: wishlistReducer,
+  modal: modalReducer,
 });
 
 const persistConfig = {

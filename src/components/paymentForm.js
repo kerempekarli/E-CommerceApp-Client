@@ -5,6 +5,28 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 export default function PaymentForm() {
+  const CARD_OPTIONS = {
+    iconStyle: "solid",
+    style: {
+      base: {
+        zIndex: 30,
+        iconColor: "#c4f0ff",
+        color: "#ffffff",
+        fontWeight: 500,
+        backgroundColor: "#0d36db",
+        fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
+        fontSize: "32px",
+        fontSmoothing: "antialiased",
+        maxWidth: "400px",
+        ":-webkit-autofill": { color: "#fce883" },
+        "::placeholder": { color: "#87bbfd" },
+      },
+      invalid: {
+        iconColor: "#db0d30",
+        color: "#db0d30",
+      },
+    },
+  };
   const [success, setSuccess] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
@@ -44,13 +66,18 @@ export default function PaymentForm() {
   return (
     <>
       {!success ? (
-        <form className="py-5 px-2" onSubmit={handleSubmit}>
-          <fieldset className="FormGroup">
+        <form className="py-5 px-2 max-w-2xl mx-auto" onSubmit={handleSubmit}>
+          <fieldset className="text-white">
             <div>
-              <CardElement className=""></CardElement>
+              <CardElement options={CARD_OPTIONS}></CardElement>
             </div>
           </fieldset>
-          <button type="submit">Pay</button>
+          <button
+            className="text-white bg-blue-600 font-semibold  px-20 text-2xl py-5 rounded-xl mt-4"
+            type="submit"
+          >
+            Pay
+          </button>
         </form>
       ) : (
         <div>
