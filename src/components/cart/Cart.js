@@ -124,9 +124,12 @@ const Cart = ({ setOpen }) => {
         <div>TOTAL PRİCE : {totalPrice}</div>
         <Link
           to={"/cart-detail"}
-          className="py-2 px-4 bg-green-700 text-white rounded-lg mt-1"
+          onClick={() => {
+            setOpen(false);
+          }}
+          className="py-2 px-4 block bg-green-700 text-white rounded-lg mt-1"
         >
-          Sipariş ver
+          Sepete git
         </Link>
       </div>
     </div>

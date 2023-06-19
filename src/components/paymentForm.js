@@ -3,7 +3,11 @@ import { useState } from "react";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
+import { openModal, closeModal } from "../stores/modal/modalSlice";
+import { useDispatch } from "react-redux";
 export default function PaymentForm() {
   const CARD_OPTIONS = {
     iconStyle: "solid",
@@ -29,7 +33,9 @@ export default function PaymentForm() {
   };
   const [success, setSuccess] = useState(false);
   const stripe = useStripe();
+  const dispatch = useDispatch();
   const elements = useElements();
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -37,6 +43,9 @@ export default function PaymentForm() {
       card: elements.getElement(CardElement),
     });
 
+    if (error) {
+      toast.error("Lütfen kart bilgilerinizi kontrol edin");
+    }
     if (!error) {
       try {
         const token = Cookies.get("token");
@@ -55,7 +64,10 @@ export default function PaymentForm() {
         );
         if (response.data.success) {
           console.log("Successful payment");
+          toast.success("Sipariş başarıyla oluşturuldu");
+          dispatch(closeModal());
           setSuccess(true);
+          navigate("/");
         }
       } catch (err) {
         console.log("error");
@@ -65,25 +77,19 @@ export default function PaymentForm() {
 
   return (
     <>
-      {!success ? (
-        <form className="py-5 px-2 max-w-2xl mx-auto" onSubmit={handleSubmit}>
-          <fieldset className="text-white">
-            <div>
-              <CardElement options={CARD_OPTIONS}></CardElement>
-            </div>
-          </fieldset>
-          <button
-            className="text-white bg-blue-600 font-semibold  px-20 text-2xl py-5 rounded-xl mt-4"
-            type="submit"
-          >
-            Pay
-          </button>
-        </form>
-      ) : (
-        <div>
-          <h2>You just bought a sweet spatula</h2>
-        </div>
-      )}
+      <form className="py-5 px-2 max-w-2xl mx-auto" onSubmit={handleSubmit}>
+        <fieldset className="text-white">
+          <div>
+            <CardElement options={CARD_OPTIONS}></CardElement>
+          </div>
+        </fieldset>
+        <button
+          className="text-white bg-blue-600 font-semibold  px-20 text-2xl py-5 rounded-xl mt-4"
+          type="submit"
+        >
+          Pay
+        </button>
+      </form>
     </>
   );
 }

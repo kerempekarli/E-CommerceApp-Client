@@ -5,6 +5,7 @@ import { setToCart } from "../../stores/cart/cartSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 import { closeModal, openModal } from "../../stores/modal/modalSlice";
 import {
   addToCartAsync,
@@ -117,12 +118,13 @@ const CartDetail = ({ setOpen }) => {
 
     if (outOfStockItems.length > 0) {
       // Display warning message for out of stock items
-      alert(
+      toast.error(
         "Some items are out of stock. Please adjust the quantity or remove them from your cart."
       );
     } else {
       // Proceed with the order
-      alert("Order placed successfully!");
+      toast.success("Order placed successfully!");
+      dispatch(openModal());
     }
   };
 
@@ -181,7 +183,7 @@ const CartDetail = ({ setOpen }) => {
           onClick={handlePlaceOrder}
           className="py-2 block px-4 w-full mt-3 bg-green-700 text-white rounded-lg"
         >
-          Sipariş ver
+          Siparişi tamamla
         </button>
       </div>
     </div>
