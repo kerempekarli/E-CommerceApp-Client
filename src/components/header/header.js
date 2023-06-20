@@ -10,12 +10,15 @@ import { clearCartAction } from "../../stores/cart/cartActions";
 import { useDispatch, useSelector } from "react-redux";
 import { learnUserRole } from "../../utils/checkRole";
 import { logoutAction } from "../../stores/auth/authAction";
-
+import axios from "axios";
+import io from "socket.io-client";
 import {
   faThumbsUp,
   faShoppingCart,
   faHeart,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
+import { fetchNotificationData } from "../../stores/notification/notification";
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -23,7 +26,14 @@ export default function Header() {
   const auth = useSelector((state) => state.auth);
   const [isOpen, setOpen] = useState(false);
   const [role, setRole] = useState("");
+  const [isOpenBell, setIsOpenBell] = useState(false);
+  const [notification, setNotification] = useState("");
+  const user = useSelector((state) => state.auth);
+  const notificationDataRedux = useSelector(
+    (state) => state.notifications.notificationData
+  );
 
+  const token = Cookies.get("token");
   useEffect(() => {
     learnUserRole(setRole);
     console.log("ÇALIŞTIM");
@@ -38,6 +48,78 @@ export default function Header() {
     navigate("/");
 
     dispatch(clearCartAction());
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3232/notifications/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
+            },
+          }
+        );
+        const notificationData = response.data;
+        console.log("NOTIFICATİON DATA ", notificationData);
+        dispatch(fetchNotificationData(notificationData));
+      } catch (error) {
+        console.log("Veri alınırken bir hata oluştu:", error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, token]);
+
+  useEffect(() => {
+    const socket = io("http://localhost:3002");
+    const roomId = user.user.id; // User_id'yi string olarak alın
+
+    // Odaya katıl
+    socket.emit("joinRoom", roomId);
+    socket.on("notification", async (data) => {
+      console.log("SOCKET ALINDI!!!!!!", data);
+      console.log("SOCKET ALINDI!!!!!!");
+      console.log("SOCKET ALINDI!!!!!!");
+      console.log("SOCKET ALINDI!!!!!!");
+      console.log("SOCKET ALINDI!!!!!!");
+      try {
+        const response = await axios.get(
+          "http://localhost:3232/notifications/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
+            },
+          }
+        );
+        const notificationData = response.data;
+        dispatch(fetchNotificationData(notificationData));
+      } catch (error) {
+        console.log("Veri alınırken bir hata oluştu:", error);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [dispatch, token, user]);
+
+  const handleCloseNotification = async () => {
+    if (isOpenBell === true) {
+      setIsOpenBell(!isOpenBell);
+      const response = await axios.post(
+        "http://localhost:3232/notifications/set-all-notifications-true",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
+          },
+        }
+      );
+    } else {
+      setIsOpenBell(!isOpenBell);
+    }
   };
   return (
     <nav className="flex relative items-center justify-around max-w-7xl mx-auto font-medium text-xl h-20">
@@ -62,7 +144,16 @@ export default function Header() {
             />
           </button>
         )}
+
         {auth.user !== null && <Wishlist></Wishlist>}
+        {auth.user !== null && (
+          <button className="ml-2" onClick={handleCloseNotification}>
+            <FontAwesomeIcon
+              icon={faBell}
+              className={`text-2xl text-gray-500`}
+            />
+          </button>
+        )}
         {auth.user !== null && (
           <button
             className="text-2xl bg-red-500 p-2 ml-10 text-white rounded-lg"
@@ -73,8 +164,22 @@ export default function Header() {
             Logout
           </button>
         )}
+
+        {isOpen && <Cart setOpen={setOpen}></Cart>}
+        {isOpenBell && (
+          <div className="absolute z-10 bg-green-100 p-5 top-20">
+            {notificationDataRedux?.map((notification) => (
+              <div
+                className={`${
+                  notification.seen ? "bg-green-500" : "bg-gray-300"
+                } p-2 mb-2`}
+              >
+                {notification.content}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      {isOpen && <Cart setOpen={setOpen} ></Cart>}
     </nav>
   );
 }

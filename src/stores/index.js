@@ -10,6 +10,7 @@ import likeReducer from "./likes/likeReducer";
 import wishlistReducer from "./wishlist/wishlistSlice";
 import authReducer from "./auth/authSlice";
 import modalReducer from "./modal/modalSlice";
+import notificationReducer from "./notification/notification";
 const rootReducer = combineReducers({
   auth: authReducer,
   cart: cartReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   likes: likeReducer,
   wishlist: wishlistReducer,
   modal: modalReducer,
+  notifications: notificationReducer,
 });
 
 const persistConfig = {
