@@ -19,7 +19,10 @@ import {
   faHeart,
   faBell,
 } from "@fortawesome/free-solid-svg-icons";
-import { fetchNotificationData } from "../../stores/notification/notification";
+import {
+  fetchNotificationData,
+  setAllOfSeenTrue,
+} from "../../stores/notification/notification";
 export default function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -77,34 +80,38 @@ export default function Header() {
     fetchData();
   }, [dispatch, user, token]);
 
-  // useEffect(() => {
-  //   const socket = io("http://localhost:3002");
-  //   const roomId = user && user.user.id; // User_id'yi string olarak alın
+  useEffect(() => {
+    if (auth.user === null) {
+      return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
+    }
 
-  //   // Odaya katıl
-  //   socket.emit("joinRoom", roomId);
-  //   socket.on("notification", async (data) => {
-  //     console.log("SOCKET ALINDI!!!!!!", user);
-  //     try {
-  //       const response = await axios.get(
-  //         "http://localhost:3232/notifications/user",
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
-  //           },
-  //         }
-  //       );
-  //       const notificationData = response.data;
-  //       dispatch(fetchNotificationData(notificationData));
-  //     } catch (error) {
-  //       console.log("Veri alınırken bir hata oluştu:", error);
-  //     }
-  //   });
+    const socket = io("http://localhost:3002");
+    const roomId = user && auth.user.id; // User_id'yi string olarak alın
 
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, [dispatch, token, user]);
+    // Odaya katıl
+    socket.emit("joinRoom", roomId);
+    socket.on("notification", async (data) => {
+      console.log("BİLDİRİM SOCKET ALINDI!!!!!!", user);
+      try {
+        const response = await axios.get(
+          "http://localhost:3232/notifications/user",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
+            },
+          }
+        );
+        const notificationData = response.data;
+        dispatch(fetchNotificationData(notificationData));
+      } catch (error) {
+        console.log("Veri alınırken bir hata oluştu:", error);
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [dispatch, token, user]);
 
   const handleCloseNotification = async () => {
     if (isOpenBell === true) {
@@ -118,6 +125,7 @@ export default function Header() {
           },
         }
       );
+      dispatch(setAllOfSeenTrue());
     } else {
       setIsOpenBell(!isOpenBell);
     }
@@ -171,6 +179,7 @@ export default function Header() {
           <div className="absolute z-10 bg-green-100 p-5 top-20">
             {notificationDataRedux?.map((notification) => (
               <div
+                key={notification.id}
                 className={`${
                   notification.seen ? "bg-green-500" : "bg-gray-300"
                 } p-2 mb-2`}

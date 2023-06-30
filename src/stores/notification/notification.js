@@ -12,8 +12,15 @@ const notificationSlice = createSlice({
     fetchNotificationData: (state, action) => {
       state.notificationData = action.payload;
     },
+    setAllOfSeenTrue: (state) => {
+      state.notificationData = state.notificationData.map((notification) => ({
+        ...notification,
+        seen: true,
+      }));
+    },
   },
 });
 
-export const { fetchNotificationData } = notificationSlice.actions;
+export const { fetchNotificationData, setAllOfSeenTrue } =
+  notificationSlice.actions;
 export default notificationSlice.reducer;
