@@ -2,7 +2,7 @@ import { addToCart, removeFromCart, clearCart, setToCart } from "./cartSlice";
 import Cookies from "js-cookie";
 import axios from "axios";
 export const addToCartAsync = (product) => {
-  return async (dispatch) => {
+  return async (dispatch) => {  
     try {
       const productfix = { ...product, product_id: product.id };
       console.log("productfix ", productfix);

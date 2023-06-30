@@ -26,7 +26,7 @@ import {
   removeFromWishlist,
 } from "../../stores/wishlist/wishlistActions.js";
 import Cookies from "js-cookie";
-
+import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import SellerList from "../../components/sellerList/sellerList";
 
@@ -48,9 +48,9 @@ const ProductDetailPage = () => {
   const dispatch = useDispatch();
   const likedProducts = useSelector((state) => state.likes);
   const cartProducts = useSelector((state) => state.cart);
-  const user = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.auth);
   const wishlistProducts = useSelector((state) => state.wishlist);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -59,11 +59,11 @@ const ProductDetailPage = () => {
         );
         setProducts(response.data.products);
         setProduct(response.data.products[0]);
-
-        console.log("PRODUCT,", response.data);
-        dispatch(fetchLikedProducts());
-        dispatch(setToCartAction());
-        dispatch(fetchWishlist());
+        if (auth.user !== null) {
+          dispatch(fetchLikedProducts());
+          dispatch(setToCartAction());
+          dispatch(fetchWishlist());
+        }
       } catch (error) {
         console.error(error);
       }
@@ -73,21 +73,25 @@ const ProductDetailPage = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
+    if (auth.user === null) {
+      return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
+    }
     const parsedId = parseInt(id);
     const isLiked = likedProducts?.includes(parsedId);
     const isInCart = cartProducts?.some((item) => item.product_id === parsedId);
-    const isInWishlist = wishlistProducts?.some(
-      (item) => item.product_id === parsedId
-    );
-    console.log("IS IN CART", isInCart);
-    console.log("CART PRODUCTS", cartProducts);
+    const isInWishlist =
+      wishlistProducts &&
+      wishlistProducts.some((item) => item.product_id === parsedId);
 
     setLike(isLiked);
     setInCart(isInCart);
     setInWishlist(isInWishlist);
-  }, [likedProducts, cartProducts, wishlistProducts, id]);
+  }, [likedProducts, cartProducts, wishlistProducts, id, auth.user]);
 
   useEffect(() => {
+    if (auth.user === null) {
+      return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
+    }
     const fetchComments = async () => {
       try {
         const response = await axios.get(
@@ -103,33 +107,6 @@ const ProductDetailPage = () => {
 
     fetchComments();
   }, [id]);
-  useEffect(() => {
-    console.log("USER_ID_KONTROLÜ ", user.user.id);
-    // Socket.io sunucusuna bağlan
-    const socket = io("http://localhost:3002");
-
-    socket.on("connect", () => {
-      console.log("Socket.io bağlantısı kuruldu");
-      const roomId = user.user.id; // User_id'yi string olarak alın
-
-      // Odaya katıl
-      socket.emit("joinRoom", roomId);
-    });
-
-    socket.on("updateOrderStatus", ({ status }) => {
-      // Sipariş durumu güncellendiğinde yapılacak işlemler
-      setOrderStatus(status);
-      console.log("ksadgkskgsakgdskagkdasgksad");
-
-      // Bildirim gönder
-      toast.success(`Sipariş durumu güncellendi: ${status}`);
-    });
-
-    // Component temizlendiğinde Socket.io bağlantısını kapat
-    return () => {
-      socket.disconnect();
-    };
-  }, [user]);
 
   const handleLike = () => {
     const parsedId = parseInt(id);
@@ -208,6 +185,11 @@ const ProductDetailPage = () => {
     setEditCommentIndex(index);
   };
   const handleCommentDelete = async (index) => {
+    if (auth.user === null) {
+      navigate("/login"); // Yönlendirme yapılacak sayfa
+      return;
+    }
+
     try {
       const commentId = comments[index].id;
       const token = await Cookies.get("token");

@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { SET_WISHLIST } from "../wishlist/wishlistSlice";
+import { logoutAction } from "../auth/authAction";
 
 export const addToWishlist = (productId) => async (dispatch) => {
   try {
@@ -43,6 +44,9 @@ export const removeFromWishlist = (productId) => async (dispatch) => {
 
     dispatch(fetchWishlist());
   } catch (error) {
+    // Token süresi doldu veya geçersiz
+    dispatch(logoutAction()); // Kullanıcıyı oturumu kapat
+    // Oturum açma sayfasına yönlendirme işlemini burada gerçekleştirebilirsiniz
     console.error(error);
   }
 };
@@ -50,7 +54,7 @@ export const removeFromWishlist = (productId) => async (dispatch) => {
 export const fetchWishlist = () => async (dispatch) => {
   try {
     const token = Cookies.get("token");
-    console.log("BURASI ÇALIŞTIIIIIIIIIIIIIIIIIIIIII");
+    console.log("Fetch Wishlist Action Çalıştı");
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,

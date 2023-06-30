@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import { useNavigate, useLocation } from "react-router-dom";
 import { clearCartAction } from "../../stores/cart/cartActions";
 import { useDispatch, useSelector } from "react-redux";
+
 import { learnUserRole } from "../../utils/checkRole";
 import { logoutAction } from "../../stores/auth/authAction";
 import axios from "axios";
@@ -51,18 +52,22 @@ export default function Header() {
   };
 
   useEffect(() => {
+    if (auth.user === null) {
+      return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
+    }
+
     const fetchData = async () => {
       try {
         const response = await axios.get(
           "http://localhost:3232/notifications/user",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         const notificationData = response.data;
-        console.log("NOTIFICATİON DATA ", notificationData);
+        console.log("NOTIFICATION DATA", notificationData);
         dispatch(fetchNotificationData(notificationData));
       } catch (error) {
         console.log("Veri alınırken bir hata oluştu:", error);
@@ -70,40 +75,36 @@ export default function Header() {
     };
 
     fetchData();
-  }, [dispatch, token]);
+  }, [dispatch, user, token]);
 
-  useEffect(() => {
-    const socket = io("http://localhost:3002");
-    const roomId = user.user.id; // User_id'yi string olarak alın
+  // useEffect(() => {
+  //   const socket = io("http://localhost:3002");
+  //   const roomId = user && user.user.id; // User_id'yi string olarak alın
 
-    // Odaya katıl
-    socket.emit("joinRoom", roomId);
-    socket.on("notification", async (data) => {
-      console.log("SOCKET ALINDI!!!!!!", data);
-      console.log("SOCKET ALINDI!!!!!!");
-      console.log("SOCKET ALINDI!!!!!!");
-      console.log("SOCKET ALINDI!!!!!!");
-      console.log("SOCKET ALINDI!!!!!!");
-      try {
-        const response = await axios.get(
-          "http://localhost:3232/notifications/user",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
-            },
-          }
-        );
-        const notificationData = response.data;
-        dispatch(fetchNotificationData(notificationData));
-      } catch (error) {
-        console.log("Veri alınırken bir hata oluştu:", error);
-      }
-    });
+  //   // Odaya katıl
+  //   socket.emit("joinRoom", roomId);
+  //   socket.on("notification", async (data) => {
+  //     console.log("SOCKET ALINDI!!!!!!", user);
+  //     try {
+  //       const response = await axios.get(
+  //         "http://localhost:3232/notifications/user",
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`, // Bearer token'ınızı buraya ekleyin
+  //           },
+  //         }
+  //       );
+  //       const notificationData = response.data;
+  //       dispatch(fetchNotificationData(notificationData));
+  //     } catch (error) {
+  //       console.log("Veri alınırken bir hata oluştu:", error);
+  //     }
+  //   });
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [dispatch, token, user]);
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, [dispatch, token, user]);
 
   const handleCloseNotification = async () => {
     if (isOpenBell === true) {
@@ -166,7 +167,7 @@ export default function Header() {
         )}
 
         {isOpen && <Cart setOpen={setOpen}></Cart>}
-        {isOpenBell && (
+        {auth.user !== null && isOpenBell && (
           <div className="absolute z-10 bg-green-100 p-5 top-20">
             {notificationDataRedux?.map((notification) => (
               <div
