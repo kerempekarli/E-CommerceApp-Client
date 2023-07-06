@@ -60,26 +60,48 @@ export default function Header() {
       return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
     }
 
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3232/notifications/user",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const notificationData = response.data;
-        console.log("NOTIFICATION DATA", notificationData);
-        dispatch(fetchNotificationData(notificationData));
-      } catch (error) {
-        console.log("Veri alınırken bir hata oluştu:", error);
-      }
-    };
+    if (auth.user.role_name === "user") {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:3232/notifications/user",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const notificationData = response.data;
+          console.log("NOTIFICATION DATA", notificationData);
+          dispatch(fetchNotificationData(notificationData));
+        } catch (error) {
+          console.log("Veri alınırken bir hata oluştu:", error);
+        }
+      };
 
-    fetchData();
-  }, [dispatch, user, token]);
+      fetchData();
+    } else {
+      const fetchDataSeller = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:3232/notifications/seller",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const notificationData = response.data;
+          console.log("NOTIFICATION DATA of seller", notificationData);
+          dispatch(fetchNotificationData(notificationData));
+        } catch (error) {
+          console.log("Veri alınırken bir hata oluştu:", error);
+        }
+      };
+
+      fetchDataSeller();
+    }
+  }, [dispatch, auth, token]);
 
   useEffect(() => {
     if (auth.user === null) {
@@ -155,7 +177,7 @@ export default function Header() {
           </button>
         )}
 
-        {auth.user !== null && <Wishlist></Wishlist>}
+        {auth.user === "user" && <Wishlist></Wishlist>}
         {auth.user !== null && (
           <button className="ml-2" onClick={handleCloseNotification}>
             <FontAwesomeIcon

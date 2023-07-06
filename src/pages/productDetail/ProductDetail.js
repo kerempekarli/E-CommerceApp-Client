@@ -59,7 +59,7 @@ const ProductDetailPage = () => {
         );
         setProducts(response.data.products);
         setProduct(response.data.products[0]);
-        if (auth.user !== null) {
+        if (auth.user.role_name === "user") {
           dispatch(fetchLikedProducts());
           dispatch(setToCartAction());
           dispatch(fetchWishlist());
@@ -70,10 +70,10 @@ const ProductDetailPage = () => {
     };
 
     fetchProduct();
-  }, [id, dispatch]);
+  }, [id, dispatch, auth]);
 
   useEffect(() => {
-    if (auth.user === null) {
+    if (auth.user === null && auth.user.role_name === "seller") {
       return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
     }
     const parsedId = parseInt(id);
@@ -250,32 +250,34 @@ const ProductDetailPage = () => {
       <p className="text-gray-400 text-xs mt-4">
         Created At: {product?.created_at}
       </p>
-      <div className="flex justify-center mt-4">
-        <button onClick={handleLike} className="mr-4">
-          <FontAwesomeIcon
-            icon={faThumbsUp}
-            className={`text-2xl ${
-              isLiked ? "text-green-500" : "text-gray-500"
-            }`}
-          />
-        </button>
-        <button onClick={handleAddToCart} className="mr-4">
-          <FontAwesomeIcon
-            icon={faShoppingCart}
-            className={`text-2xl ${
-              isInCart ? "text-yellow-500" : "text-gray-500"
-            }`}
-          />
-        </button>
-        <button onClick={handleAddToWishlist}>
-          <FontAwesomeIcon
-            icon={faHeart}
-            className={`text-2xl ${
-              isInWishlist ? "text-red-500" : "text-gray-500"
-            }`}
-          />
-        </button>
-      </div>
+      {auth.user.role_name === "user" && (
+        <div className="flex justify-center mt-4">
+          <button onClick={handleLike} className="mr-4">
+            <FontAwesomeIcon
+              icon={faThumbsUp}
+              className={`text-2xl ${
+                isLiked ? "text-green-500" : "text-gray-500"
+              }`}
+            />
+          </button>
+          <button onClick={handleAddToCart} className="mr-4">
+            <FontAwesomeIcon
+              icon={faShoppingCart}
+              className={`text-2xl ${
+                isInCart ? "text-yellow-500" : "text-gray-500"
+              }`}
+            />
+          </button>
+          <button onClick={handleAddToWishlist}>
+            <FontAwesomeIcon
+              icon={faHeart}
+              className={`text-2xl ${
+                isInWishlist ? "text-red-500" : "text-gray-500"
+              }`}
+            />
+          </button>
+        </div>
+      )}
       {/* COMMENTS */}
       <div className="">
         {" "}
@@ -304,26 +306,27 @@ const ProductDetailPage = () => {
             </li>
           ))}
         </ul>
-        <form
-          className="flex justify-center mt-5"
-          onSubmit={handleCommentSubmit}
-        >
-          <div>
-            <textarea
-              className="outline-0 bg-gray-100 block"
-              value={comment}
-              onChange={handleCommentChange}
-            />
-          </div>
-          <button
-            className="bg-green-500 flex-grow-0 p-2 rounded-lg "
-            type="submit"
+        {auth.user.role_name === "user" && (
+          <form
+            className="flex justify-center mt-5"
+            onSubmit={handleCommentSubmit}
           >
-            {editCommentIndex === -1 ? "Add Comment" : "Update Comment"}
-          </button>
-        </form>
+            <div>
+              <textarea
+                className="outline-0 bg-gray-100 block"
+                value={comment}
+                onChange={handleCommentChange}
+              />
+            </div>
+            <button
+              className="bg-green-500 flex-grow-0 p-2 rounded-lg"
+              type="submit"
+            >
+              {editCommentIndex === -1 ? "Add Comment" : "Update Comment"}
+            </button>
+          </form>
+        )}
       </div>
-
       {/* SELLER LİST */}
       <SellerList
         productDTO={products}
