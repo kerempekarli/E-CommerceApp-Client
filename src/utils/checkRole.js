@@ -17,7 +17,7 @@ export const learnUserRole = async (setRole) => {
 
       // response.data içerisinde kullanıcının rolü yer alacaktır
       const userRole = response.data.role_name;
-      console.log(userRole);
+      console.log("CHECK ROLE ", userRole);
       setRole(userRole);
       return userRole;
     } else {

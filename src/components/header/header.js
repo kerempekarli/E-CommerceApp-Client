@@ -39,8 +39,9 @@ export default function Header() {
 
   const token = Cookies.get("token");
   useEffect(() => {
-    learnUserRole(setRole);
+    const userRole = learnUserRole(setRole);
     console.log("ÇALIŞTIM");
+    console.log("ROLE ", userRole);
   }, [location, role]);
 
   const handleLogout = () => {

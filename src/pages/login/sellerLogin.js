@@ -3,12 +3,15 @@ import Ram from "../../assets/indir_auto_x2 (1).jpg";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { loginAction } from "../../stores/auth/authAction";
+import { useDispatch, useSelector } from "react-redux";
 
 import Cookies from "js-cookie";
 
 export default function Login() {
   const [auth, setAuth] = useState({ email: null, password: null });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLoginSuccess = (sessionToken) => {
     Cookies.set("token", sessionToken, { expires: 7, path: "/" });
     navigate("/");
@@ -31,10 +34,11 @@ export default function Login() {
       });
 
       const data = await response.json();
-      console.log("RESPONSE ", data.tokens?.access_token);
-
+      console.log("SELLER LOGIN RESPONSE ", data);
+      dispatch(loginAction(data));
       if (response.status === 200) {
         toast.success("Giriş başarılı!");
+
         handleLoginSuccess(data.tokens.access_token.toString());
       } else {
         toast.error("Giriş başarısız.");
