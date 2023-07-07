@@ -18,6 +18,7 @@ import {
   faShoppingCart,
   faHeart,
   faBell,
+  faBoxOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   fetchNotificationData,
@@ -176,13 +177,20 @@ export default function Header() {
             />
           </button>
         )}
-
+        {auth.user.role_name === "seller" && (
+          <div className="mt-2 text-amber-500">
+            {" "}
+            <button>
+              <FontAwesomeIcon icon={faBoxOpen} className={`text-2xl `} />
+            </button>
+          </div>
+        )}
         {auth.user === "user" && <Wishlist></Wishlist>}
         {auth.user !== null && (
           <button className="ml-2" onClick={handleCloseNotification}>
             <FontAwesomeIcon
               icon={faBell}
-              className={`text-2xl text-gray-500`}
+              className={`text-2xl text-amber-600`}
             />
           </button>
         )}

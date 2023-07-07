@@ -6,6 +6,8 @@ import {
   faThumbsUp,
   faShoppingCart,
   faHeart,
+  faBox,
+  faBoxOpen,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -278,6 +280,7 @@ const ProductDetailPage = () => {
           </button>
         </div>
       )}
+      
       {/* COMMENTS */}
       <div className="">
         {" "}
