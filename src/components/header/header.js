@@ -32,6 +32,7 @@ export default function Header() {
   const [isOpen, setOpen] = useState(false);
   const [role, setRole] = useState("");
   const [isOpenBell, setIsOpenBell] = useState(false);
+  const [sellerOrders, setSellerOrders] = useState(false);
   const [notification, setNotification] = useState("");
   const user = useSelector((state) => state.auth);
   const notificationDataRedux = useSelector(
@@ -154,6 +155,9 @@ export default function Header() {
       setIsOpenBell(!isOpenBell);
     }
   };
+  const handleSelleOrders = async () => {
+    setSellerOrders(!sellerOrders);
+  };
   return (
     <nav className="flex relative items-center justify-around max-w-7xl mx-auto font-medium text-xl h-20">
       <div className="text-2xl font-semibold">Logo</div>
@@ -178,7 +182,7 @@ export default function Header() {
           </button>
         )}
         {auth.user.role_name === "seller" && (
-          <div className="mt-2 text-amber-500">
+          <div onClick={handleSelleOrders} className="mt-2 text-amber-500">
             {" "}
             <button>
               <FontAwesomeIcon icon={faBoxOpen} className={`text-2xl `} />
@@ -206,6 +210,15 @@ export default function Header() {
         )}
 
         {isOpen && <Cart setOpen={setOpen}></Cart>}
+        {sellerOrders && (
+          <div className="absolute top-20">
+            <ul>
+              <li>madde1</li>
+              <li>madde1</li>
+              <li>madde1</li>
+            </ul>
+          </div>
+        )}
         {auth.user !== null && isOpenBell && (
           <div className="absolute z-10 bg-green-100 p-5 top-20">
             {notificationDataRedux?.map((notification) => (

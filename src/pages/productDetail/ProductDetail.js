@@ -280,7 +280,7 @@ const ProductDetailPage = () => {
           </button>
         </div>
       )}
-      
+
       {/* COMMENTS */}
       <div className="">
         {" "}
