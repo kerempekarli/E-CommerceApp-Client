@@ -34,6 +34,7 @@ export default function Header() {
   const [isOpenBell, setIsOpenBell] = useState(false);
   const [sellerOrders, setSellerOrders] = useState(false);
   const [notification, setNotification] = useState("");
+  const [orders, setOrders] = useState([]);
   const user = useSelector((state) => state.auth);
   const notificationDataRedux = useSelector(
     (state) => state.notifications.notificationData
@@ -138,6 +139,24 @@ export default function Header() {
     };
   }, [dispatch, token, user]);
 
+  const fetchOrders = async () => {
+    try {
+      // API çağrısını Axios ile yapın
+      const response = await axios.get(
+        "http://localhost:3232/orders/getOrders",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      setOrders(data);
+      console.log("FETCH ORDER DOĞRU ", data);
+    } catch (error) {
+      console.error("Siparişleri alırken bir hata oluştu:", error);
+    }
+  };
   const handleCloseNotification = async () => {
     if (isOpenBell === true) {
       setIsOpenBell(!isOpenBell);
@@ -156,6 +175,7 @@ export default function Header() {
     }
   };
   const handleSelleOrders = async () => {
+    fetchOrders();
     setSellerOrders(!sellerOrders);
   };
   return (
@@ -213,9 +233,24 @@ export default function Header() {
         {sellerOrders && (
           <div className="absolute top-20">
             <ul>
-              <li>madde1</li>
-              <li>madde1</li>
-              <li>madde1</li>
+              {orders.map((order) => (
+                <li className="mb-2 text-left bg-orange-300 text-black border border-black text-sm p-2">
+                  <div>Ürün adı: {" " + order.product_name}</div>
+                  <div>Adet: {" " + order.quantity}</div>
+                  <div>Alıcı: {" " + order.username}</div>
+                  <div>
+                    Sipariş tutarı: {" " + order.unit_price * order.quantity}
+                  </div>
+                  <div className="flex space-x-2 mt-2">
+                    <button className="px-3 py-2 text-white rounded-md bg-red-500">
+                      Reddet
+                    </button>
+                    <button className="px-3 py-2  text-white rounded-md bg-green-600">
+                      Kabul et
+                    </button>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
         )}
