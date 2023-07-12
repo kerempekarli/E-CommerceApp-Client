@@ -178,6 +178,67 @@ export default function Header() {
     fetchOrders();
     setSellerOrders(!sellerOrders);
   };
+  const changeOrderStatus = async (logic, id) => {
+    try {
+      if (logic === true) {
+        console.log("LOGIC TRUE CALISTI");
+        const response = await axios.put(
+          "http://localhost:3232/orders/order-details/:id",
+          {
+            orderId: id,
+            newStatus: "preparing",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Durum başarıyla güncellendi
+          console.log("Sipariş ayrıntısı kabul edildi.");
+          // Ek işlemler yapabilirsiniz
+        } else {
+          // Durum güncelleme başarısız oldu
+          console.error(
+            "Sipariş ayrıntısı durumu güncellenirken bir hata oluştu."
+          );
+          // Hata durumunu ele alabilirsiniz
+        }
+      }
+
+      if (logic === false) {
+        console.log("FALSE");
+        const response = await axios.put(
+          "http://localhost:3232/orders/order-details/:id",
+          {
+            orderId: id,
+            newStatus: "denied",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Durum başarıyla güncellendi
+          console.log("Sipariş ayrıntısı reddedildi.");
+          // Ek işlemler yapabilirsiniz
+        } else {
+          // Durum güncelleme başarısız oldu
+          console.error(
+            "Sipariş ayrıntısı durumu güncellenirken bir hata oluştu."
+          );
+          // Hata durumunu ele alabilirsiniz
+        }
+      }
+    } catch (error) {
+      console.error("İstek gönderilirken bir hata oluştu:", error);
+    }
+  };
   return (
     <nav className="flex relative items-center justify-around max-w-7xl mx-auto font-medium text-xl h-20">
       <div className="text-2xl font-semibold">Logo</div>
@@ -233,24 +294,38 @@ export default function Header() {
         {sellerOrders && (
           <div className="absolute top-20">
             <ul>
-              {orders.map((order) => (
-                <li className="mb-2 text-left bg-orange-300 text-black border border-black text-sm p-2">
-                  <div>Ürün adı: {" " + order.product_name}</div>
-                  <div>Adet: {" " + order.quantity}</div>
-                  <div>Alıcı: {" " + order.username}</div>
-                  <div>
-                    Sipariş tutarı: {" " + order.unit_price * order.quantity}
-                  </div>
-                  <div className="flex space-x-2 mt-2">
-                    <button className="px-3 py-2 text-white rounded-md bg-red-500">
-                      Reddet
-                    </button>
-                    <button className="px-3 py-2  text-white rounded-md bg-green-600">
-                      Kabul et
-                    </button>
-                  </div>
-                </li>
-              ))}
+              {orders.map((order) =>
+                order.status === "pending" ? (
+                  <li
+                    key={order.order_detail_id}
+                    className="mb-2 text-left bg-orange-300 text-black border border-black text-sm p-2"
+                  >
+                    <div>Ürün adı: {order.product_name}</div>
+                    <div>Adet: {order.quantity}</div>
+                    <div>Alıcı: {order.username}</div>
+                    <div>
+                      Sipariş tutarı: {order.unit_price * order.quantity} TL
+                    </div>
+                    <div>{order.status}</div>
+                    <div className="flex space-x-2 mt-2">
+                      <button
+                        onClick={(e) => changeOrderStatus(false, order.id)}
+                        className="px-3 py-2 text-white rounded-md bg-red-500"
+                      >
+                        Reddet
+                      </button>
+                      <button
+                        onClick={(e) =>
+                          changeOrderStatus(true, order.order_detail_id)
+                        }
+                        className="px-3 py-2  text-white rounded-md bg-green-600"
+                      >
+                        Kabul et
+                      </button>
+                    </div>
+                  </li>
+                ) : null
+              )}
             </ul>
           </div>
         )}
