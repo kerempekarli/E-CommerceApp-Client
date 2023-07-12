@@ -263,6 +263,10 @@ export default function Header() {
       console.error("İstek gönderilirken bir hata oluştu:", error);
     }
   };
+  const pendingCount = orders.filter(
+    (order) => order.status === "pending"
+  ).length;
+
   return (
     <nav className="flex relative items-center justify-around max-w-7xl mx-auto font-medium text-xl h-20">
       <div className="text-2xl font-semibold">Logo</div>
@@ -287,11 +291,17 @@ export default function Header() {
           </button>
         )}
         {auth.user.role_name === "seller" && (
-          <div onClick={handleSelleOrders} className="mt-2 text-amber-500">
+          <div
+            onClick={handleSelleOrders}
+            className="relative mt-2 text-amber-500"
+          >
             {" "}
             <button>
               <FontAwesomeIcon icon={faBoxOpen} className={`text-2xl `} />
-            </button>
+            </button>{" "}
+            <div className=" absolute top-3   text-green-500  font-semibold">
+              {pendingCount}
+            </div>
           </div>
         )}
         {auth.user === "user" && <Wishlist></Wishlist>}
@@ -355,6 +365,7 @@ export default function Header() {
             </ul>
           </div>
         )}
+
         {auth.user !== null && isOpenBell && (
           <div className="absolute z-10 bg-green-100 p-5 top-20">
             {notificationDataRedux?.map((notification) => (
