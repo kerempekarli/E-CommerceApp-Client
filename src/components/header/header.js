@@ -199,6 +199,18 @@ export default function Header() {
           // Durum başarıyla güncellendi
           console.log("Sipariş ayrıntısı kabul edildi.");
           // Ek işlemler yapabilirsiniz
+          const updatedOrders = orders.map((order) => {
+            if (order.order_detail_id === id) {
+              return {
+                ...order,
+                status: "preparing",
+              };
+            }
+            return order;
+          });
+
+          // Güncellenmiş sellerOrders dizisini ayarla
+          setOrders(updatedOrders);
         } else {
           // Durum güncelleme başarısız oldu
           console.error(
@@ -227,6 +239,18 @@ export default function Header() {
           // Durum başarıyla güncellendi
           console.log("Sipariş ayrıntısı reddedildi.");
           // Ek işlemler yapabilirsiniz
+          const updatedOrders = orders.map((order) => {
+            if (order.order_detail_id === id) {
+              return {
+                ...order,
+                status: "denied",
+              };
+            }
+            return order;
+          });
+
+          // Güncellenmiş sellerOrders dizisini ayarla
+          setOrders(updatedOrders);
         } else {
           // Durum güncelleme başarısız oldu
           console.error(
@@ -309,7 +333,9 @@ export default function Header() {
                     <div>{order.status}</div>
                     <div className="flex space-x-2 mt-2">
                       <button
-                        onClick={(e) => changeOrderStatus(false, order.id)}
+                        onClick={(e) =>
+                          changeOrderStatus(false, order.order_detail_id)
+                        }
                         className="px-3 py-2 text-white rounded-md bg-red-500"
                       >
                         Reddet
