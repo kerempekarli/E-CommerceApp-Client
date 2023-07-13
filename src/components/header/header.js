@@ -33,6 +33,7 @@ export default function Header() {
   const [role, setRole] = useState("");
   const [isOpenBell, setIsOpenBell] = useState(false);
   const [sellerOrders, setSellerOrders] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
   const [notification, setNotification] = useState("");
   const [orders, setOrders] = useState([]);
   const user = useSelector((state) => state.auth);
@@ -41,23 +42,12 @@ export default function Header() {
   );
 
   const token = Cookies.get("token");
+
   useEffect(() => {
     const userRole = learnUserRole(setRole);
     console.log("ÇALIŞTIM");
     console.log("ROLE ", userRole);
   }, [location, role]);
-
-  const handleLogout = () => {
-    // Çerezden tokeni temizle
-    Cookies.remove("token");
-    dispatch(logoutAction());
-    setRole("");
-    // Giriş sayfasına yönlendir
-    navigate("/");
-
-    dispatch(clearCartAction());
-  };
-
   useEffect(() => {
     if (auth.user === null) {
       return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
@@ -105,7 +95,6 @@ export default function Header() {
       fetchDataSeller();
     }
   }, [dispatch, auth, token]);
-
   useEffect(() => {
     if (auth.user === null) {
       return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
@@ -138,24 +127,42 @@ export default function Header() {
       socket.disconnect();
     };
   }, [dispatch, token, user]);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        // API çağrısını Axios ile yapın
+        const response = await axios.get(
+          "http://localhost:3232/orders/getOrders",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = response.data;
+        setOrders(data);
+        const count = data.filter((order) => order.status === "pending").length;
+        setPendingCount(count);
+        console.log("FETCH ORDER DOĞRU ", data);
+      } catch (error) {
+        console.error("Siparişleri alırken bir hata oluştu:", error);
+      }
+    };
+    fetchOrders();
+  }, [token]);
+  useEffect(() => {
+    const count = orders.filter((order) => order.status === "pending").length;
+    setPendingCount(count);
+  }, [orders]);
+  const handleLogout = () => {
+    // Çerezden tokeni temizle
+    Cookies.remove("token");
+    dispatch(logoutAction());
+    setRole("");
+    // Giriş sayfasına yönlendir
+    navigate("/");
 
-  const fetchOrders = async () => {
-    try {
-      // API çağrısını Axios ile yapın
-      const response = await axios.get(
-        "http://localhost:3232/orders/getOrders",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = response.data;
-      setOrders(data);
-      console.log("FETCH ORDER DOĞRU ", data);
-    } catch (error) {
-      console.error("Siparişleri alırken bir hata oluştu:", error);
-    }
+    dispatch(clearCartAction());
   };
   const handleCloseNotification = async () => {
     if (isOpenBell === true) {
@@ -175,7 +182,6 @@ export default function Header() {
     }
   };
   const handleSelleOrders = async () => {
-    fetchOrders();
     setSellerOrders(!sellerOrders);
   };
   const changeOrderStatus = async (logic, id) => {
@@ -263,9 +269,26 @@ export default function Header() {
       console.error("İstek gönderilirken bir hata oluştu:", error);
     }
   };
-  const pendingCount = orders.filter(
-    (order) => order.status === "pending"
-  ).length;
+  const fetchOrders = async () => {
+    try {
+      // API çağrısını Axios ile yapın
+      const response = await axios.get(
+        "http://localhost:3232/orders/getOrders",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      setOrders(data);
+      const count = data.filter((order) => order.status === "pending").length;
+      setPendingCount(count);
+      console.log("FETCH ORDER DOĞRU ", data);
+    } catch (error) {
+      console.error("Siparişleri alırken bir hata oluştu:", error);
+    }
+  };
 
   return (
     <nav className="flex relative items-center justify-around max-w-7xl mx-auto font-medium text-xl h-20">
