@@ -298,6 +298,7 @@ export default function Header() {
         <Link to={"/categories"}>Categories</Link>
         <Link to={"/about"}>About</Link>
         <Link to={"/contact"}>Contact</Link>
+        <Link to={"/orders"}>Orders</Link>
       </div>
       <div className="text-2xl flex font-medium">
         {role === "user" && (

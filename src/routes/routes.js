@@ -14,6 +14,7 @@ import ContactPage from "../pages/contact/contact";
 import AboutPage from "../pages/about/about.js";
 import SalesChart from "../pages/d3/d3";
 import CartDetail from "../pages/cart/CartPage";
+import Orders from "../pages/orders/OrdersPage";
 export const routes = [
   {
     path: "/",
@@ -34,6 +35,7 @@ export const routes = [
       { path: "/about", element: <AboutPage /> },
       { path: "/sales-chart", element: <SalesChart /> },
       { path: "/cart-detail", element: <CartDetail /> },
+      { path: "/orders", element: <Orders /> },
     ],
   },
 ];
