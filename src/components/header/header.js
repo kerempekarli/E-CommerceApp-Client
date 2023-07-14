@@ -314,7 +314,7 @@ export default function Header() {
             />
           </button>
         )}
-        {auth.user.role_name === "seller" && (
+        {auth?.user?.role_name === "seller" && (
           <div
             onClick={handleSelleOrders}
             className="relative mt-2 text-amber-500"
