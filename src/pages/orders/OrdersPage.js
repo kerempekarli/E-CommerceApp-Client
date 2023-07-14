@@ -2,10 +2,15 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useState } from "react";
-
+import styles from "./OrderPage.module.css";
 const token = Cookies.get("token");
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState([]);
+  const [pendingOrders, setPendingOrders] = useState([]);
+  const [completedOrders, setCompletedOrders] = useState([]);
+  const [shippingOrders, setShippingOrders] = useState([]);
+  const [preparingOrders, setPreparingOrders] = useState([]);
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -20,14 +25,25 @@ export default function OrdersPage() {
         );
         const data = response.data;
         setOrders(data);
-        console.log("FETCH ORDER DOĞRU ", data);
+
+        const pending = data.filter((order) => order.status === "pending");
+        setPendingOrders(pending);
+
+        const completed = data.filter((order) => order.status === "completed");
+        setCompletedOrders(completed);
+
+        const shipping = data.filter((order) => order.status === "shipping");
+        setShippingOrders(shipping);
+
+        const preparing = data.filter((order) => order.status === "preparing");
+        setPreparingOrders(preparing);
       } catch (error) {
         console.error("Siparişleri alırken bir hata oluştu:", error);
       }
     };
     fetchOrders();
   }, [token]);
-  const [orders, setOrders] = useState([]);
+
   const changeOrderStatus = async (logic, id) => {
     try {
       if (logic === true) {
@@ -115,70 +131,104 @@ export default function OrdersPage() {
   };
   return (
     <div>
-      {/* CONTAİNER */}
-      <div className="flex justify-center space-x-10">
-        <div className="w-64 border h-32 font-medium text-left">
-          <div className="text-5xl mt-5 ml-5">45</div>
-          <div className="ml-5">Pending orders</div>
-        </div>
-        <div className="w-64 border h-32 font-medium text-left">
-          <div className="text-5xl mt-5 ml-5">45</div>
-          <div className="ml-5">Preparing orders</div>
-        </div>
-        <div className="w-64 border h-32 font-medium text-left">
-          <div className="text-5xl mt-5 ml-5">45</div>
-          <div className="ml-5">Shipping orders</div>
-        </div>
-        <div className="w-64 border h-32 font-medium text-left">
-          <div className="text-5xl mt-5 ml-5">45</div>
-          <div className="ml-5">Completed orders</div>
-        </div>
-      </div>
-      {/* LİST */}
-      <div>
-        <ul>
-          {orders.map((order) => (
-            <li key={order.id}>
+      <div className="flex"></div>
+      <div className="mx-20 my-10 p-2">
+        <h2 className="font-semibold text-2xl">Pending Orders</h2>
+        <ul
+          className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+        >
+          {pendingOrders.map((order) => (
+            <li
+              className="bg-blue-100 p-3 m-3 rounded-md text-left font-semibold"
+              key={order.id}
+            >
               <div>Ürün adı: {order.product_name}</div>
               <div>Adet: {order.quantity}</div>
               <div>Alıcı: {order.username}</div>
               <div>Sipariş tutarı: {order.unit_price * order.quantity} TL</div>
               <div>{order.status}</div>
-              <div className="flex space-x-2 mt-2">
-                {order.status === "pending" && (
-                  <>
-                    <button
-                      onClick={() =>
-                        changeOrderStatus(true, order.order_detail_id)
-                      }
-                      className="px-3 py-2 text-white rounded-md bg-green-600"
-                    >
-                      Kabul et
-                    </button>
-                    <button
-                      onClick={() =>
-                        changeOrderStatus(false, order.order_detail_id)
-                      }
-                      className="px-3 py-2 text-white rounded-md bg-red-500"
-                    >
-                      Reddet
-                    </button>
-                  </>
-                )}
-                {order.status === "preparing" && (
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      placeholder="Kargo Kodu"
-                      value={order.tracking_number}
-                      className="px-3 py-2 border rounded-md"
-                    />
-                    <button className="px-3 py-2 text-white rounded-md bg-blue-500">
-                      Kargoya Ver
-                    </button>
-                  </div>
-                )}
+              <div className="mt-2">
+                <button
+                  className="p-2 mr-2 rounded-md text-white bg-green-500"
+                  onClick={() => changeOrderStatus(order.id)}
+                >
+                  Kabul Et
+                </button>
+                <button
+                  className="p-2  rounded-md text-white bg-red-500"
+                  onClick={() => changeOrderStatus(order.id)}
+                >
+                  Reddet
+                </button>
               </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mx-20 my-10  p-2">
+        <h2 className="font-semibold text-2xl">Preparing Orders</h2>
+        <ul
+          className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+        >
+          {preparingOrders.map((order) => (
+            <li
+              className="bg-blue-100 p-3 m-3 rounded-md text-left font-semibold"
+              key={order.id}
+            >
+              <div>Ürün adı: {order.product_name}</div>
+              <div>Adet: {order.quantity}</div>
+              <div>Alıcı: {order.username}</div>
+              <div>Sipariş tutarı: {order.unit_price * order.quantity} TL</div>
+              <div>{order.status}</div>
+              <div className="mt-2">
+                <input
+                  className="p-1 outline-none"
+                  type="text"
+                  placeholder="Kargo Kodu"
+                  value={order.tracking_number}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mx-20 my-10 p2">
+        <h2 className="font-semibold text-2xl">Completed Orders</h2>
+        <ul
+          className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+        >
+          {completedOrders.map((order) => (
+            <li
+              className="bg-blue-100 p-3 m-3 rounded-md text-left font-semibold"
+              key={order.id}
+            >
+              <div>Ürün adı: {order.product_name}</div>
+              <div>Adet: {order.quantity}</div>
+              <div>Alıcı: {order.username}</div>
+              <div>Sipariş tutarı: {order.unit_price * order.quantity} TL</div>
+              <div>{order.status}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mx-20 my-10 p-2">
+        <h2 className="font-semibold text-2xl">Shipping Orders</h2>
+        <ul
+          className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+        >
+          {shippingOrders.map((order) => (
+            <li
+              className="bg-blue-100 p-3 m-3 rounded-md text-left font-semibold"
+              key={order.id}
+            >
+              <div>Ürün adı: {order.product_name}</div>
+              <div>Adet: {order.quantity}</div>
+              <div>Alıcı: {order.username}</div>
+              <div>Sipariş tutarı: {order.unit_price * order.quantity} TL</div>
+              <div>{order.status}</div>
             </li>
           ))}
         </ul>

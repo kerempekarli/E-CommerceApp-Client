@@ -1,0 +1,26 @@
+.container {
+  /* Container stilleri */
+}
+
+.scrollableList {
+  /* Liste stilleri */
+}
+
+.customScrollbar::-webkit-scrollbar {
+  width: 10px; /* Scrollbar genişliği */
+  height: 8px;
+}
+
+.customScrollbar::-webkit-scrollbar-track {
+  background-color: #99c2ff; /* Scrollbar arka plan rengi */
+  border-radius: 2px; /* Scrollbar kenar yuvarlanma */
+}
+
+.customScrollbar::-webkit-scrollbar-thumb {
+  background-color: #1a75ff; /* Scrollbar başparmak rengi */
+  border-radius: 2px; /* Scrollbar başparmak kenar yuvarlanma */
+}
+
+.customScrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #1a75ff; /* Scrollbar başparmak hover rengi */
+}
