@@ -299,6 +299,9 @@ export default function Header() {
         <Link to={"/about"}>About</Link>
         <Link to={"/contact"}>Contact</Link>
         {auth.user === "seller" && <Link to={"/orders"}>Orders</Link>}
+        {auth.user.role_name === "user" && (
+          <Link to={"/user-orders"}>Orders</Link>
+        )}
       </div>
       <div className="text-2xl flex font-medium">
         {role === "user" && (
