@@ -31,6 +31,7 @@ export default function Header() {
   const auth = useSelector((state) => state.auth);
   const [isOpen, setOpen] = useState(false);
   const [role, setRole] = useState("");
+  const [notificationCount, setNotificationCount] = useState(0);
   const [isOpenBell, setIsOpenBell] = useState(false);
   const [sellerOrders, setSellerOrders] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
@@ -40,7 +41,7 @@ export default function Header() {
   const notificationDataRedux = useSelector(
     (state) => state.notifications.notificationData
   );
-
+  const cart = useSelector((state) => state.cart);
   const token = Cookies.get("token");
 
   useEffect(() => {
@@ -154,6 +155,12 @@ export default function Header() {
     const count = orders.filter((order) => order.status === "pending").length;
     setPendingCount(count);
   }, [orders]);
+  useEffect(() => {
+    const unseenNotificationCount = notificationDataRedux.filter(
+      (notification) => !notification.seen
+    ).length;
+    setNotificationCount(unseenNotificationCount);
+  }, [notificationDataRedux]);
   const handleLogout = () => {
     // Çerezden tokeni temizle
     Cookies.remove("token");
@@ -324,7 +331,7 @@ export default function Header() {
         )}
         {role === "user" && (
           <button
-            className="mr-2"
+            className="relative mr-2"
             onClick={() => {
               setOpen(!isOpen);
             }}
@@ -333,6 +340,9 @@ export default function Header() {
               icon={faShoppingCart}
               className={`text-2xl text-yellow-500`}
             />
+            <div className="absolute top-4 left-4 text-md text-green-500">
+              {cart.length}
+            </div>
           </button>
         )}
         {auth?.user?.role_name === "seller" && (
@@ -351,11 +361,14 @@ export default function Header() {
         )}
         {auth.user === "user" && <Wishlist></Wishlist>}
         {auth.user !== null && (
-          <button className="ml-2" onClick={handleCloseNotification}>
+          <button className="ml-2 relative" onClick={handleCloseNotification}>
             <FontAwesomeIcon
               icon={faBell}
               className={`text-2xl text-amber-600`}
             />
+            <div className="absolute top-4 text-md left-3 text-green-500">
+              {notificationCount}
+            </div>
           </button>
         )}
         {auth.user !== null && (
