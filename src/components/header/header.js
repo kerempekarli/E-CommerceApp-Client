@@ -156,7 +156,7 @@ export default function Header() {
     setPendingCount(count);
   }, [orders]);
   useEffect(() => {
-    const unseenNotificationCount = notificationDataRedux.filter(
+    const unseenNotificationCount = notificationDataRedux?.filter(
       (notification) => !notification.seen
     ).length;
     setNotificationCount(unseenNotificationCount);

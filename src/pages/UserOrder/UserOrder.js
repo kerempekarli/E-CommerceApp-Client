@@ -79,7 +79,6 @@ export default function UserOrder() {
             <div>{completedOrders.length}</div>
           </div>
         </div>
-
         {pendingOrders.length > 0 && (
           <div className="mx-20 my-10 p-2">
             <h2 className="font-semibold text-2xl text-orange-500 mb-2">
@@ -90,6 +89,102 @@ export default function UserOrder() {
             >
               <ul className="flex">
                 {pendingOrders.map((order) => (
+                  <li
+                    className="bg-blue-100 w-48 p-3 m-3 rounded-md text-left font-semibold"
+                    key={order.order_id}
+                  >
+                    {order.order_details.map((detail) => (
+                      <div key={detail.id}>
+                        <div>Ürün adı: {detail.product_name}</div>
+                        <div>Adet: {detail.quantity}</div>
+                        <div>Alıcı: {detail.username}</div>
+                        <div>
+                          Sipariş tutarı: {detail.unit_price * detail.quantity}{" "}
+                          TL
+                        </div>
+                        <div>{detail.status}</div>
+                      </div>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+        {preparingOrders.length > 0 && (
+          <div className="mx-20 my-10 p-2">
+            <h2 className="font-semibold text-2xl text-orange-500 mb-2">
+              Preparing Orders
+            </h2>
+            <div
+              className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+            >
+              <ul className="flex">
+                {preparingOrders.map((order) => (
+                  <li
+                    className="bg-blue-100 p-3 m-3 w-48 rounded-md text-left font-semibold"
+                    key={order.order_id}
+                  >
+                    {order.order_details.map((detail) => (
+                      <div key={detail.id}>
+                        <div>Ürün adı: {detail.product_name}</div>
+                        <div>Adet: {detail.quantity}</div>
+                        <div>Alıcı: {detail.username}</div>
+                        <div>
+                          Sipariş tutarı: {detail.unit_price * detail.quantity}{" "}
+                          TL
+                        </div>
+                        <div>Sipariş tutarı: {detail.status}</div>
+                      </div>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}{" "}
+        {shippingOrders.length > 0 && (
+          <div className="mx-20 my-10 p-2">
+            <h2 className="font-semibold text-2xl text-orange-500 mb-2">
+              Shipping Orders
+            </h2>
+            <div
+              className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+            >
+              <ul className="flex">
+                {shippingOrders.map((order) => (
+                  <li
+                    className="bg-blue-100 w-48 p-3 m-3 rounded-md text-left font-semibold"
+                    key={order.order_id}
+                  >
+                    {order.order_details.map((detail) => (
+                      <div key={detail.id}>
+                        <div>Ürün adı: {detail.product_name}</div>
+                        <div>Adet: {detail.quantity}</div>
+                        <div>Alıcı: {detail.username}</div>
+                        <div>
+                          Sipariş tutarı: {detail.unit_price * detail.quantity}{" "}
+                          TL
+                        </div>
+                        <div>{detail.status}</div>
+                      </div>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+        {completedOrders.length > 0 && (
+          <div className="mx-20 my-10 p-2">
+            <h2 className="font-semibold text-2xl text-orange-500 mb-2">
+              Completed Orders
+            </h2>
+            <div
+              className={`flex overflow-auto ${styles.scrollableList} ${styles.customScrollbar}`}
+            >
+              <ul className="flex">
+                {completedOrders.map((order) => (
                   <li
                     className="bg-blue-100 p-3 m-3 rounded-md text-left font-semibold"
                     key={order.order_id}
@@ -112,8 +207,6 @@ export default function UserOrder() {
             </div>
           </div>
         )}
-
-        {/* Diğer durumlar için benzer şekilde devam edebilirsiniz */}
       </div>
     </div>
   );
