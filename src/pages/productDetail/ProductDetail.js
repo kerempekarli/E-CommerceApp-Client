@@ -61,7 +61,7 @@ const ProductDetailPage = () => {
         );
         setProducts(response.data.products);
         setProduct(response.data.products[0]);
-        if (auth.user.role_name === "user") {
+        if (auth?.user?.role_name === "user") {
           dispatch(fetchLikedProducts());
           dispatch(setToCartAction());
           dispatch(fetchWishlist());
@@ -75,7 +75,7 @@ const ProductDetailPage = () => {
   }, [id, dispatch, auth]);
 
   useEffect(() => {
-    if (auth.user === null && auth.user.role_name === "seller") {
+    if (auth.user === null && auth?.user?.role_name === "seller") {
       return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
     }
     const parsedId = parseInt(id);
@@ -252,7 +252,7 @@ const ProductDetailPage = () => {
       <p className="text-gray-400 text-xs mt-4">
         Created At: {product?.created_at}
       </p>
-      {auth.user.role_name === "user" && (
+      {auth?.user?.role_name === "user" && (
         <div className="flex justify-center mt-4">
           <button onClick={handleLike} className="mr-4">
             <FontAwesomeIcon
@@ -309,7 +309,7 @@ const ProductDetailPage = () => {
             </li>
           ))}
         </ul>
-        {auth.user.role_name === "user" && (
+        {auth?.user?.role_name === "user" && (
           <form
             className="flex justify-center mt-5"
             onSubmit={handleCommentSubmit}

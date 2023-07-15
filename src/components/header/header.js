@@ -53,7 +53,7 @@ export default function Header() {
       return; // Kullanıcı null ise, işlemleri yapmadan useEffect'i sonlandır
     }
 
-    if (auth.user.role_name === "user") {
+    if (auth?.user?.role_name === "user") {
       const fetchData = async () => {
         try {
           const response = await axios.get(
@@ -298,12 +298,30 @@ export default function Header() {
         <Link to={"/categories"}>Categories</Link>
         <Link to={"/about"}>About</Link>
         <Link to={"/contact"}>Contact</Link>
-        {auth.user === "seller" && <Link to={"/orders"}>Orders</Link>}
-        {auth.user.role_name === "user" && (
+        {auth?.user?.role_name === "seller" && (
+          <Link to={"/orders"}>Orders</Link>
+        )}
+        {auth?.user?.role_name === "user" && (
           <Link to={"/user-orders"}>Orders</Link>
         )}
       </div>
       <div className="text-2xl flex font-medium">
+        {auth.user === null && (
+          <Link
+            to="http://localhost:3000/login"
+            className="bg-green-500 px-3 py-2 mr-3 text-white rounded-xl"
+          >
+            Giriş yap
+          </Link>
+        )}
+        {auth.user === null && (
+          <Link
+            to="http://localhost:3000/register"
+            className="bg-orange-500 px-4 py-2 text-white rounded-xl"
+          >
+            Kayıt ol
+          </Link>
+        )}
         {role === "user" && (
           <button
             className="mr-2"
